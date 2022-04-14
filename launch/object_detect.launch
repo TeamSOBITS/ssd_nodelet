@@ -2,13 +2,25 @@
     <arg name="manager_name" default="nodelet_manager" />
     <arg name="manager_threads" default="4" />
 
-    <node pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager" output="screen">
-        <param name="num_worker_threads" value="$(arg manager_threads)" />
-    </node>
+    <group ns = "ssd_object_detect">
+        <node pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager" output="screen">
+            <param name="num_worker_threads" value="$(arg manager_threads)" />
+        </node>
+    
+        <node pkg="nodelet" type="nodelet" name="object_detect" args="load ssd_nodelet/ImageSubscriber $(arg manager_name)" >
+            <param name="ssd_img_show_flag" type="bool" value="true"/>
+            <param name="ssd_execute_default" type="bool" value="true"/>
+            <param name="ssd_pub_result_image" type="bool" value="true"/>
 
-    <node pkg="nodelet" type="nodelet" name="object_detect" args="load ssd_nodelet/ImageSubscriber $(arg manager_name)" >
-        <rosparam>
+            <param name="ssd_image_topic_name" type="str" value="/camera/rgb/image_raw"/>
+            <param name="ssd_in_scale_factor" type="double" value="0.007843"/>
+            <param name="ssd_confidence_threshold" type="double" value="0.5"/>
 
-        </rosparam>
-    </node>     
+            <param name="ssd_prototxt_name" type="str" value="voc_object.prototxt"/>
+            <param name="ssd_caffemodel_name" type="str" value="voc_object.caffemodel"/>
+            <param name="ssd_class_names_file" type="str" value="voc_object_names.txt"/>
+
+            <param name="target_frame" type="str" value="camera_depth_optical_frame"/>
+        </node>   
+    </group>  
 </launch>
