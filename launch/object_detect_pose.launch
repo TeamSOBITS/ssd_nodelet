@@ -7,27 +7,29 @@
     <arg name="ssd_pub_result_image"        default="true" />
     
     <arg name="ssd_image_topic_name"        default="/camera/rgb/image_raw" />
-
-    <arg name="ssd_in_scale_factor"         default="1.0" />
-    <arg name="ssd_confidence_threshold"    default="0.5" />
-
-    <arg name="ssd_prototxt_name"           default="face.prototxt" />
-    <arg name="ssd_caffemodel_name"         default="face.caffemodel" />
-    <arg name="ssd_class_names_file"        default="face_names.txt" />
-
+    <arg name="ssd_cloud_topic_name"        default="/camera/depth/points" />
     <arg name="target_frame"                default="camera_depth_optical_frame" />
 
-    <group ns = "ssd_face_detect">
+    <arg name="ssd_in_scale_factor"         default="0.007843" />
+    <arg name="ssd_confidence_threshold"    default="0.5" />
+
+    <arg name="ssd_prototxt_name"           default="voc_object.prototxt" />
+    <arg name="ssd_caffemodel_name"         default="voc_object.caffemodel" />
+    <arg name="ssd_class_names_file"        default="voc_object_names.txt" />
+
+    <group ns = "ssd_object_detect">
         <node pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager" output="screen">
             <param name="num_worker_threads" value="$(arg manager_threads)" />
         </node>
     
-        <node pkg="nodelet" type="nodelet" name="ssd_node" args="load ssd_nodelet/ImageSubscriber $(arg manager_name)" >
+        <node pkg="nodelet" type="nodelet" name="ssd_node" args="load ssd_nodelet/ImageCloudSubscriber $(arg manager_name)" >
             <param name="ssd_img_show_flag"         type="bool"     value="$(arg ssd_img_show_flag)"/>
             <param name="ssd_execute_default"       type="bool"     value="$(arg ssd_execute_default)"/>
             <param name="ssd_pub_result_image"      type="bool"     value="$(arg ssd_pub_result_image)"/>
 
             <param name="ssd_image_topic_name"      type="str"      value="$(arg ssd_image_topic_name)"/>
+            <param name="ssd_cloud_topic_name"      type="str"      value="$(arg ssd_cloud_topic_name)"/>
+            <param name="target_frame"              type="str"      value="$(arg target_frame)"/>
 
             <param name="ssd_in_scale_factor"       type="double"   value="$(arg ssd_in_scale_factor)"/>
             <param name="ssd_confidence_threshold"  type="double"   value="$(arg ssd_confidence_threshold)"/>
@@ -35,6 +37,6 @@
             <param name="ssd_prototxt_name"         type="str"      value="$(arg ssd_prototxt_name)"/>
             <param name="ssd_caffemodel_name"       type="str"      value="$(arg ssd_caffemodel_name)"/>
             <param name="ssd_class_names_file"      type="str"      value="$(arg ssd_class_names_file)"/>
-        </node>   
+        </node>  
     </group>  
 </launch>

@@ -17,14 +17,23 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/dnn.hpp>
 #include <opencv2/dnn/shape_utils.hpp>
+// for pcl
+#include <pcl_ros/point_cloud.h>            
+#include <pcl_ros/transforms.h>             
+#include <pcl/point_types.h>                
+#include <sensor_msgs/PointCloud2.h>
 // for msg pub
 #include <sobit_common_msg/StringArray.h>
 #include <sobit_common_msg/BoundingBox.h>
 #include <sobit_common_msg/BoundingBoxes.h>
+#include <sobit_common_msg/ObjectPoseArray.h>
 
 constexpr size_t RESIZE_WIDTH = 300;
 constexpr size_t RESIZE_HEIGHT = 300;
 constexpr float  MEAN_VAL = 127.5;//最大輝度の半分の値
+
+typedef pcl::PointXYZ PointT;
+typedef pcl::PointCloud<PointT> PointCloud;
 
 namespace ssd_nodelet {
     class SingleShotMultiboxDetector {
@@ -48,6 +57,14 @@ namespace ssd_nodelet {
                             const std_msgs::Header& header,
                             sobit_common_msg::StringArrayPtr detect_object_name,
                             sobit_common_msg::BoundingBoxesPtr object_bbox_array,
+                            sensor_msgs::ImagePtr result_img_msg );
+
+            int conpute(    cv::Mat& input_img, 
+                            const PointCloud::Ptr input_cloud,
+                            const std_msgs::Header& header,
+                            sobit_common_msg::StringArrayPtr detect_object_name,
+                            sobit_common_msg::BoundingBoxesPtr object_bbox_array,
+                            sobit_common_msg::ObjectPoseArrayPtr object_pose_array,
                             sensor_msgs::ImagePtr result_img_msg );
     };
 }

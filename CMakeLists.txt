@@ -73,5 +73,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} src/nodelets/image_subscriber_nodelet.cpp
+                            src/nodelets/image_cloud_subscriber_nodelet.cpp
                             src/single_shot_multibox_detector.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

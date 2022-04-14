@@ -5,4 +5,10 @@
         <description>
         </description>
     </class>
+    <class name="ssd_nodelet/ImageCloudSubscriber"
+        type="ssd_nodelet::ImageCloudSubscriber"
+        base_class_type="nodelet::Nodelet">
+        <description>
+        </description>
+    </class>
 </library>

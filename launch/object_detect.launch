@@ -7,6 +7,7 @@
     <arg name="ssd_pub_result_image"        default="true" />
     
     <arg name="ssd_image_topic_name"        default="/camera/rgb/image_raw" />
+
     <arg name="ssd_in_scale_factor"         default="0.007843" />
     <arg name="ssd_confidence_threshold"    default="0.5" />
 
@@ -27,14 +28,13 @@
             <param name="ssd_pub_result_image"      type="bool"     value="$(arg ssd_pub_result_image)"/>
 
             <param name="ssd_image_topic_name"      type="str"      value="$(arg ssd_image_topic_name)"/>
+
             <param name="ssd_in_scale_factor"       type="double"   value="$(arg ssd_in_scale_factor)"/>
             <param name="ssd_confidence_threshold"  type="double"   value="$(arg ssd_confidence_threshold)"/>
 
             <param name="ssd_prototxt_name"         type="str"      value="$(arg ssd_prototxt_name)"/>
             <param name="ssd_caffemodel_name"       type="str"      value="$(arg ssd_caffemodel_name)"/>
             <param name="ssd_class_names_file"      type="str"      value="$(arg ssd_class_names_file)"/>
-
-            <param name="target_frame"              type="str"      value="$(arg target_frame)"/>
         </node>  
     </group>  
 </launch>
