@@ -8,8 +8,8 @@ SSD(Single Shot MultiBox Detector)による物体検出（Nodelet実装）
 ## How To Use
 
 ```bash
-$ roslaunch ssd_node face_detect.launch  <- face detect mode
-$ roslaunch ssd_node object_detect.launch  <- object detect mode
+$ roslaunch ssd_nodelet face_detect.launch  <- face detect mode
+$ roslaunch ssd_nodelet object_detect.launch  <- object detect mode
 ```
 
 ### Publications:
