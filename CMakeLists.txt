@@ -19,6 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
   sobit_common_msg
   std_msgs
   tf
+  pluginlib
+  nodelet
 )
 
 set(OpenCV_DIR /opt/opencv/opencv_3.4.2/share/OpenCV/)  # for ros melodic
@@ -57,15 +59,19 @@ find_package(OpenCV 3.4.2 REQUIRED #4.0.0
 # )
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES ssd_nodelet
 #  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs tf
 #  DEPENDS system_lib
 )
 
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 )
+
+add_library(${PROJECT_NAME} src/nodelets/image_subscriber_nodelet.cpp
+                            src/single_shot_multibox_detector.cpp)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
