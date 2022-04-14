@@ -1,6 +1,6 @@
 # SSD Nodelet
 
-SSD(Single Shot MultiBox Detector)による物体検出（Nodelet実装）
+SSD(Single Shot MultiBox Detector)による物体検出（Nodelet実装による高速化）
 
 
 ![Face Detect Result](doc/test.png)
