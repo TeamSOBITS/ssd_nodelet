@@ -15,15 +15,14 @@ $ roslaunch ssd_node object_detect.launch  <- object detect mode
 ### Publications:
  * /rosout [rosgraph_msgs/Log]
  * /ssd_object_detect/detect_result [sensor_msgs/Image]
- * /ssd_object_detect/objects_name [ssd_node/stringArray]
+ * /ssd_object_detect/objects_name [sobit_common_msg/StringArray]
  * /ssd_object_detect/objects_num [std_msgs/UInt8]
- * /ssd_object_detect/objects_rect [ssd_node/BoundingBoxes]
+ * /ssd_object_detect/objects_rect [sobit_common_msg/BoundingBoxes]
 
 ### Subscriptions:
  * /camera/rgb/image_raw [sensor_msgs/Image]
  * /ssd_object_detect/detect_ctrl [std_msgs/Bool]
 
- 
  <br>追記（2020/03/9）
  - tf_broadcaster_unique_class.cpp 
     - これはtfのクラス名が重複するのを防ぐために作成した
