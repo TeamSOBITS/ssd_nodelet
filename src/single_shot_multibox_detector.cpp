@@ -133,6 +133,14 @@ int SingleShotMultiboxDetector::conpute(
         bbox_array.bounding_boxes.push_back(obj_bbox);
         object_name.data.push_back(class_names_[object_class]);
 
+        cv::rectangle(input_img, object_area, cv::Scalar(0, 255, 0) ,2);
+        cv::String label = class_names_[object_class] + ": " + std::to_string(confidence);
+        int baseLine = 0;
+        cv::Size label_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+        cv::Rect label_rect = cv::Rect(cv::Point(object_area.x, object_area.y-label_size.height), cv::Size(label_size.width, label_size.height));
+        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), CV_FILLED);
+        cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
+
         sobit_common_msg::ObjectPose obj_pose;
         obj_pose.Class = obj_bbox.Class;
         int x_ctr = ( obj_bbox.xmin + obj_bbox.xmax ) / 2;
@@ -147,14 +155,6 @@ int SingleShotMultiboxDetector::conpute(
         obj_pose.pose.position.z = input_cloud->points[ array_num ].z;
         obj_pose.detect_id = object_num;
         obj_poses.object_poses.push_back( obj_pose );
-
-        cv::rectangle(input_img, object_area, cv::Scalar(0, 255, 0) ,2);
-        cv::String label = class_names_[object_class] + ": " + std::to_string(confidence);
-        int baseLine = 0;
-        cv::Size label_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
-        cv::Rect label_rect = cv::Rect(cv::Point(object_area.x, object_area.y-label_size.height), cv::Size(label_size.width, label_size.height));
-        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), CV_FILLED);
-        cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
         if ( !use_tf ) continue;
         br_.sendTransform(
