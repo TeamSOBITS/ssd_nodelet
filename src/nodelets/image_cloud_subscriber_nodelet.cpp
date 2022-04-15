@@ -48,22 +48,24 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     std::string model_configuration_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_prototxt_name", "voc_object.prototxt");
     std::string model_binary_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
     std::string class_names_file_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
+    target_frame_ = pnh_.param<std::string>( "target_frame", "base_footprint" );
 
     ssd_.initDNN( model_configuration_path, model_binary_path, class_names_file_path );
     ssd_.setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
     ssd_.setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
+    ssd_.setUseTF( pnh_.param<bool>("use_tf", true), target_frame_ );
     
     pub_result_flag_ = pnh_.param<bool>( "ssd_pub_result_image", true );
     execute_flag_ = pnh_.param<bool>("ssd_execute_default", true);
     std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
     std::string sub_cloud_topic_name = pnh_.param<std::string>( "ssd_cloud_topic_name", "/camera/depth/points" );
-    target_frame_ = pnh_.param<std::string>( "target_frame", "camera_depth_optical_frame" );
+    
     // message_filters :
     sub_cloud_ .reset ( new message_filters::Subscriber<sensor_msgs::PointCloud2> ( nh_, sub_cloud_topic_name, 1 ) );
     sub_img_ .reset ( new message_filters::Subscriber<sensor_msgs::Image> ( nh_, sub_image_topic_name, 1 ) );
     sync_ .reset ( new message_filters::Synchronizer<ImgPCSyncPolicy> ( ImgPCSyncPolicy(100), *sub_cloud_, *sub_img_ ) );
     sync_ ->registerCallback ( boost::bind( &ImageCloudSubscriber::callbackSenserData, this, _1, _2 ) );
-    sub_ctr_ = nh_.subscribe("/control", 10, &ImageCloudSubscriber::callbackControl, this);
+    sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageCloudSubscriber::callbackControl, this);
 
     pub_object_name_  = nh_.advertise<sobit_common_msg::StringArray> ("objects_name", 1);
     pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("objects_rect", 1);

@@ -41,7 +41,7 @@ void ssd_nodelet::ImageSubscriber::onInit() {
     bool execute_flag = pnh_.param<bool>("ssd_execute_default", true);
     std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
     if ( execute_flag ) sub_img_ = nh_.subscribe( sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
-    sub_ctr_ = nh_.subscribe("/control", 10, &ImageSubscriber::callbackControl, this);
+    sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageSubscriber::callbackControl, this);
 
     pub_object_name_  = nh_.advertise<sobit_common_msg::StringArray> ("objects_name", 1);
     pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("objects_rect", 1);

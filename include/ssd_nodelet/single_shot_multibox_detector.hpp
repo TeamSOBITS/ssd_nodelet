@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <ros/package.h>
+#include <tf/transform_broadcaster.h>
 #include <iostream>
 #include <fstream>
 //for image input
@@ -40,10 +41,13 @@ namespace ssd_nodelet {
         private :
             cv::dnn::Net net_;
             std::vector<std::string> class_names_;
+            tf::TransformBroadcaster br_;
         
             double in_scale_factor_;
             double confidence_threshold_;
             bool img_show_flag_;
+            bool use_tf_;
+            std::string target_frame_;
 
             int readFiles( const std::string& file_name, std::vector<std::string>* str_vec );
 
@@ -51,6 +55,7 @@ namespace ssd_nodelet {
             SingleShotMultiboxDetector( );
             void initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path );
             void setDNNParametr( const double in_scale_factor, const double confidence_threshold );
+            void setUseTF( const bool use_tf, const std::string& target_frame );
             void setImgShowFlag( const bool img_show_flag );
             
             int conpute(    cv::Mat& input_img, 
@@ -98,6 +103,11 @@ inline void ssd_nodelet::SingleShotMultiboxDetector::setDNNParametr( const doubl
 
 inline void ssd_nodelet::SingleShotMultiboxDetector::setImgShowFlag( const bool img_show_flag ) {
     img_show_flag_ = img_show_flag;
+}
+
+inline void ssd_nodelet::SingleShotMultiboxDetector::setUseTF( const bool use_tf, const std::string& target_frame ) {
+    use_tf_ = use_tf;
+    target_frame_ = target_frame;
 }
 
 #endif

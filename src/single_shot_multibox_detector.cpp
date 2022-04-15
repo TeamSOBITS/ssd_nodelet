@@ -5,6 +5,7 @@ using namespace ssd_nodelet;
 SingleShotMultiboxDetector::SingleShotMultiboxDetector( ) {
     setDNNParametr( 0.007843, 0.5 );
     setImgShowFlag( true );
+    setUseTF( true, "base_footprint" );
 }
 
 int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img, 
@@ -28,8 +29,9 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     sobit_common_msg::StringArray object_name;
     sobit_common_msg::BoundingBoxes bbox_array;
     int object_num = 0;
+    int detect_num = detection_mat.rows;
     
-    for (int i = 0; i < detection_mat.rows; i++) {
+    for (int i = 0; i < detect_num; i++) {
         float confidence = detection_mat.ptr<float>(i)[2];
         if ( confidence <= confidence_threshold_ ) continue;
         object_num++;
@@ -103,9 +105,12 @@ int SingleShotMultiboxDetector::conpute(
     sobit_common_msg::BoundingBoxes bbox_array;
     sobit_common_msg::ObjectPoseArray obj_poses;
     int object_num = 0;
+    int detect_num = detection_mat.rows;
     int width = input_img.cols;
-    
-    for (int i = 0; i < detection_mat.rows; i++) {
+    bool use_tf = use_tf_;
+    std::string target_frame = target_frame_;
+
+    for (int i = 0; i < detect_num; i++) {
         float confidence = detection_mat.ptr<float>(i)[2];
         if ( confidence <= confidence_threshold_ ) continue;
         object_num++;
@@ -150,6 +155,16 @@ int SingleShotMultiboxDetector::conpute(
         cv::Rect label_rect = cv::Rect(cv::Point(object_area.x, object_area.y-label_size.height), cv::Size(label_size.width, label_size.height));
         cv::rectangle(input_img, label_rect, cv::Scalar::all(255), CV_FILLED);
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
+
+        if ( !use_tf ) continue;
+        br_.sendTransform(
+            tf::StampedTransform(   
+                tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(obj_pose.pose.position.x, obj_pose.pose.position.y, obj_pose.pose.position.z)),
+                ros::Time::now(), 
+                target_frame, 
+                obj_pose.Class + "_" + std::to_string(object_num)
+            )
+        );
     }
     bbox_array.header = header;
     sensor_msgs::Image img_msg;

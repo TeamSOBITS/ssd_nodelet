@@ -5,6 +5,7 @@
     <arg name="ssd_img_show_flag"           default="true" />
     <arg name="ssd_execute_default"         default="true" />
     <arg name="ssd_pub_result_image"        default="true" />
+    <arg name="use_tf"                      default="true" />
     
     <arg name="ssd_image_topic_name"        default="/camera/rgb/image_raw" />
     <arg name="ssd_cloud_topic_name"        default="/camera/depth/points" />
@@ -17,15 +18,21 @@
     <arg name="ssd_caffemodel_name"         default="face.caffemodel" />
     <arg name="ssd_class_names_file"        default="face_names.txt" />
 
+    <!-- rviz -->
+    <arg name="rviz"                    default="true"/>
+    <arg name="rviz_cfg"                default="$(find ssd_nodelet)/config/rviz/ssd_nodelet.rviz"/>
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_cfg)"/>
+
     <group ns = "ssd_face_detect">
         <node pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager" output="screen">
             <param name="num_worker_threads" value="$(arg manager_threads)" />
         </node>
     
-        <node pkg="nodelet" type="nodelet" name="ssd_node" args="load ssd_nodelet/ImageCloudSubscriber $(arg manager_name)" >
+        <node pkg="nodelet" type="nodelet" name="ssd_nodelet" args="load ssd_nodelet/ImageCloudSubscriber $(arg manager_name)" >
             <param name="ssd_img_show_flag"         type="bool"     value="$(arg ssd_img_show_flag)"/>
             <param name="ssd_execute_default"       type="bool"     value="$(arg ssd_execute_default)"/>
             <param name="ssd_pub_result_image"      type="bool"     value="$(arg ssd_pub_result_image)"/>
+            <param name="use_tf"                    type="bool"     value="$(arg use_tf)"/>
 
             <param name="ssd_image_topic_name"      type="str"      value="$(arg ssd_image_topic_name)"/>
             <param name="ssd_cloud_topic_name"      type="str"      value="$(arg ssd_cloud_topic_name)"/>
@@ -37,8 +44,6 @@
             <param name="ssd_prototxt_name"         type="str"      value="$(arg ssd_prototxt_name)"/>
             <param name="ssd_caffemodel_name"       type="str"      value="$(arg ssd_caffemodel_name)"/>
             <param name="ssd_class_names_file"      type="str"      value="$(arg ssd_class_names_file)"/>
-
-
         </node>   
     </group>  
 </launch>
