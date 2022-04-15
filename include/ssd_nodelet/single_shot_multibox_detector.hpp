@@ -66,7 +66,8 @@ namespace ssd_nodelet {
 
             int conpute(    cv::Mat& input_img, 
                             const PointCloud::Ptr input_cloud,
-                            const std_msgs::Header& header,
+                            const std_msgs::Header& img_header,
+                            const std_msgs::Header& pc_header,
                             sobit_common_msg::StringArrayPtr detect_object_name,
                             sobit_common_msg::BoundingBoxesPtr object_bbox_array,
                             sobit_common_msg::ObjectPoseArrayPtr object_pose_array,

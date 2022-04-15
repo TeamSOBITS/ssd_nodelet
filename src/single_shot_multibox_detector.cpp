@@ -85,7 +85,8 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
 int SingleShotMultiboxDetector::conpute(    
     cv::Mat& input_img, 
     const PointCloud::Ptr input_cloud,
-    const std_msgs::Header& header,
+    const std_msgs::Header& img_header,
+    const std_msgs::Header& pc_header,
     sobit_common_msg::StringArrayPtr detect_object_name,
     sobit_common_msg::BoundingBoxesPtr object_bbox_array,
     sobit_common_msg::ObjectPoseArrayPtr object_pose_array,
@@ -166,13 +167,14 @@ int SingleShotMultiboxDetector::conpute(
             )
         );
     }
-    bbox_array.header = header;
+    bbox_array.header = img_header;
+    obj_poses.header = pc_header;
     sensor_msgs::Image img_msg;
     cv_bridge::CvImage img_bridge;
     // std_msgs::Header header;
     // header.seq = this->counter; // user defined counter
     // header.stamp = ros::Time::now();
-    img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, input_img);
+    img_bridge = cv_bridge::CvImage(img_header, sensor_msgs::image_encodings::BGR8, input_img);
     img_bridge.toImageMsg(img_msg);
     
 

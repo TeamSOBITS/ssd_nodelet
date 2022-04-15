@@ -120,7 +120,7 @@ void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::
         return;
     }
 
-    ssd_.conpute( img_raw, cloud, img_msg->header, detect_object_name, object_bbox_array, object_pose_array, result_img_msg);
+    ssd_.conpute( img_raw, cloud, img_msg->header, cloud_msg->header, detect_object_name, object_bbox_array, object_pose_array, result_img_msg);
 
     pub_object_name_.publish(detect_object_name);
     pub_object_rect_.publish(object_bbox_array);
