@@ -169,6 +169,7 @@ int SingleShotMultiboxDetector::conpute(
     }
     bbox_array.header = img_header;
     obj_poses.header = pc_header;
+    obj_poses.header.frame_id = target_frame;
     sensor_msgs::Image img_msg;
     cv_bridge::CvImage img_bridge;
     // std_msgs::Header header;
