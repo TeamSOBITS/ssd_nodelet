@@ -48,6 +48,7 @@ namespace ssd_nodelet {
             bool img_show_flag_;
             bool use_tf_;
             std::string target_frame_;
+            int counter_;
 
             int readFiles( const std::string& file_name, std::vector<std::string>* str_vec );
 

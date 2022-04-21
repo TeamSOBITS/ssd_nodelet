@@ -6,6 +6,7 @@ SingleShotMultiboxDetector::SingleShotMultiboxDetector( ) {
     setDNNParametr( 0.007843, 0.5 );
     setImgShowFlag( true );
     setUseTF( true, "base_footprint" );
+    counter_ = 0;
 }
 
 int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img, 
@@ -172,10 +173,10 @@ int SingleShotMultiboxDetector::conpute(
     obj_poses.header.frame_id = target_frame;
     sensor_msgs::Image img_msg;
     cv_bridge::CvImage img_bridge;
-    // std_msgs::Header header;
-    // header.seq = this->counter; // user defined counter
-    // header.stamp = ros::Time::now();
-    img_bridge = cv_bridge::CvImage(img_header, sensor_msgs::image_encodings::BGR8, input_img);
+    std_msgs::Header header;
+    header.seq = counter_;
+    header.stamp = ros::Time::now();
+    img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, input_img);
     img_bridge.toImageMsg(img_msg);
     
 
