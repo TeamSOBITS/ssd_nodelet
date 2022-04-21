@@ -66,10 +66,10 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     bbox_array.header = header;
     sensor_msgs::Image img_msg;
     cv_bridge::CvImage img_bridge;
-    // std_msgs::Header header;
-    // header.seq = this->counter; // user defined counter
-    // header.stamp = ros::Time::now();
-    img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, input_img);
+    std_msgs::Header curt_header;
+    curt_header.seq = counter_;
+    curt_header.stamp = ros::Time::now();
+    img_bridge = cv_bridge::CvImage(curt_header, sensor_msgs::image_encodings::BGR8, input_img);
     img_bridge.toImageMsg(img_msg);
     
 
