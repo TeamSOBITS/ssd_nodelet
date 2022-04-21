@@ -181,7 +181,7 @@ int SingleShotMultiboxDetector::conpute(
 
     if( img_show_flag_ ){
         cv::imshow("SSD_Object_Detection Result", input_img);
-        cv::waitKey(1);
+        cv::waitKey(23);
     }
     *detect_object_name = object_name;
     *object_bbox_array = bbox_array;

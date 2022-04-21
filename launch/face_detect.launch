@@ -2,9 +2,10 @@
     <arg name="manager_name"                default="nodelet_manager" />
     <arg name="manager_threads"             default="4" />
 
-    <arg name="ssd_img_show_flag"           default="true" />
+    <arg name="ssd_img_show_flag"           default="false" />
     <arg name="ssd_execute_default"         default="true" />
     <arg name="ssd_pub_result_image"        default="true" />
+    <arg name="rqt_image_view_flag"         default="true" />
     
     <arg name="ssd_image_topic_name"        default="/camera/rgb/image_raw" />
 
@@ -37,4 +38,5 @@
             <param name="ssd_class_names_file"      type="str"      value="$(arg ssd_class_names_file)"/>
         </node>   
     </group>  
+    <node if="$(arg rqt_image_view_flag)" pkg="rqt_image_view" type="rqt_image_view" name="image_view_debug" args="/ssd_object_detect/detect_result"/>
 </launch>
