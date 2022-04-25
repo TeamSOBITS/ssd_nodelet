@@ -46,8 +46,8 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     pnh_ = getPrivateNodeHandle();
 
     std::string model_configuration_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_prototxt_name", "voc_object.prototxt");
-    std::string model_binary_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
-    std::string class_names_file_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
+    std::string model_binary_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
+    std::string class_names_file_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
     target_frame_ = pnh_.param<std::string>( "target_frame", "base_footprint" );
 
     ssd_.initDNN( model_configuration_path, model_binary_path, class_names_file_path );
