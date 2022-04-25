@@ -29,9 +29,9 @@ void ssd_nodelet::ImageSubscriber::onInit() {
     nh_ = getNodeHandle();
     pnh_ = getPrivateNodeHandle();
 
-    std::string model_configuration_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_prototxt_name", "voc_object.prototxt");
-    std::string model_binary_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
-    std::string class_names_file_path = ros::package::getPath("ssd_node") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
+    std::string model_configuration_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_prototxt_name", "voc_object.prototxt");
+    std::string model_binary_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
+    std::string class_names_file_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
 
     ssd_.initDNN( model_configuration_path, model_binary_path, class_names_file_path );
     ssd_.setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
