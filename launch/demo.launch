@@ -1,0 +1,10 @@
+<launch>
+    <include file="$(find ssd_nodelet)/launch/camera_720p_16_9.launch">
+    </include>
+    <include file="$(find ssd_nodelet)/launch/object_detect.launch">
+        <arg name="ssd_img_show_flag"           value="true" />
+        <arg name="ssd_execute_default"         value="true" />
+        <arg name="ssd_pub_result_image"        value="false" />
+        <arg name="rqt_image_view_flag"         value="false" />
+    </include>
+</launch>
