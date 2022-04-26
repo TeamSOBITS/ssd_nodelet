@@ -25,7 +25,7 @@ namespace ssd_nodelet {
 
             ros::Subscriber sub_ctr_;
             ssd_nodelet::SingleShotMultiboxDetector ssd_;
-            cv_bridge::CvImagePtr cv_ptr;
+            cv_bridge::CvImagePtr cv_ptr_;
             tf::TransformListener tf_listener_;
 
             bool pub_result_flag_;
@@ -109,8 +109,8 @@ void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::
     sobit_common_msg::ObjectPoseArrayPtr object_pose_array(new sobit_common_msg::ObjectPoseArray);
     sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
     try {
-        cv_ptr = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );
-        img_raw = cv_ptr->image.clone();
+        cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );
+        img_raw = cv_ptr_->image.clone();
     } catch ( cv_bridge::Exception& e ) {
         NODELET_ERROR("cv_bridge exception: %s", e.what());
         return;
