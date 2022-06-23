@@ -60,8 +60,8 @@ find_package(OpenCV 3.4.2 REQUIRED #4.0.0
 
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES ssd_nodelet
-#  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs tf
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs tf
 #  DEPENDS system_lib
 )
 
@@ -76,3 +76,14 @@ add_library(${PROJECT_NAME} src/nodelets/image_subscriber_nodelet.cpp
                             src/nodelets/image_cloud_subscriber_nodelet.cpp
                             src/single_shot_multibox_detector.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
