@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ssd_nodelet)
 
 #魔法の1行
-add_compile_options(-std=c++11 -O2 -g -Wall)
+add_compile_options(-std=c++14 -O2 -g -Wall)
+
+find_package(OpenCV REQUIRED)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -22,14 +24,6 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   nodelet
 )
-
-set(OpenCV_DIR /opt/opencv/opencv_3.4.2/share/OpenCV/)  # for ros melodic
-find_package(OpenCV 3.4.2 REQUIRED #4.0.0
-  NO_MODULE
-  PATHS /usr/local
-  NO_DEFAULT_PATH
-)
-
 
 ## Generate messages in the 'msg' folder
 # add_message_files(
@@ -62,7 +56,8 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs tf
-#  DEPENDS system_lib
+  DEPENDS OpenCV
+  #  DEPENDS system_lib
 )
 
 include_directories(

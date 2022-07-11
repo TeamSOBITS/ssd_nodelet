@@ -98,7 +98,7 @@ void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::
         tf_listener_.waitForTransform(target_frame, cloud_src.header.frame_id, ros::Time(0), ros::Duration(1.0));
         pcl_ros::transformPointCloud(target_frame, ros::Time(0), cloud_src, cloud_src.header.frame_id,  *cloud, tf_listener_);
         cloud->header.frame_id = target_frame;
-    } catch (tf::TransformException ex) {
+    } catch ( const tf::TransformException& ex) {
         ROS_ERROR("%s", ex.what());
         return;
     }

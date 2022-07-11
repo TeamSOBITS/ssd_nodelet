@@ -60,7 +60,7 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
         int baseLine = 0;
         cv::Size label_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
         cv::Rect label_rect = cv::Rect(cv::Point(object_area.x, object_area.y-label_size.height), cv::Size(label_size.width, label_size.height));
-        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), CV_FILLED);
+        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), cv::FILLED);
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
     }
     bbox_array.header = header;
@@ -140,7 +140,7 @@ int SingleShotMultiboxDetector::conpute(
         int baseLine = 0;
         cv::Size label_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
         cv::Rect label_rect = cv::Rect(cv::Point(object_area.x, object_area.y-label_size.height), cv::Size(label_size.width, label_size.height));
-        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), CV_FILLED);
+        cv::rectangle(input_img, label_rect, cv::Scalar::all(255), cv::FILLED);
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
         sobit_common_msg::ObjectPose obj_pose;
