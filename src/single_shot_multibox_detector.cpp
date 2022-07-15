@@ -2,10 +2,12 @@
 
 using namespace ssd_nodelet;
 
-SingleShotMultiboxDetector::SingleShotMultiboxDetector( ) {
+SingleShotMultiboxDetector::SingleShotMultiboxDetector( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path ) {
+    initDNN( model_configuration_path, model_binary_path, class_names_file_path );
     setDNNParametr( 0.007843, 0.5 );
     setImgShowFlag( true );
     setUseTF( true, "base_footprint" );
+    specifyDetectionObject( false, "None" );
     counter_ = 0;
 }
 
@@ -31,13 +33,16 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     sobit_common_msg::BoundingBoxes bbox_array;
     int object_num = 0;
     int detect_num = detection_mat.rows;
-    
+    bool object_specified_enabled = object_specified_enabled_;
+    std::string specified_object_name = specified_object_name_;
+
     for (int i = 0; i < detect_num; i++) {
         float confidence = detection_mat.ptr<float>(i)[2];
         if ( confidence <= confidence_threshold_ ) continue;
         object_num++;
 
         size_t object_class = (size_t)(detection_mat.ptr<float>(i)[1]);
+        if ( object_specified_enabled && class_names_[object_class] != specified_object_name ) continue;
 
         int x_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[3] * input_img.cols);
         int y_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[4] * input_img.rows);
@@ -71,7 +76,6 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     curt_header.stamp = ros::Time::now();
     img_bridge = cv_bridge::CvImage(curt_header, sensor_msgs::image_encodings::BGR8, input_img);
     img_bridge.toImageMsg(img_msg);
-    
 
     if( img_show_flag_ ){
         cv::imshow("SSD_Object_Detection Result", input_img);
@@ -83,8 +87,8 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     return object_num;
 }
 
-int SingleShotMultiboxDetector::conpute(    
-    cv::Mat& input_img, 
+int SingleShotMultiboxDetector::conpute(
+    cv::Mat& input_img,
     const PointCloud::Ptr input_cloud,
     const std_msgs::Header& img_header,
     const std_msgs::Header& pc_header,
@@ -111,6 +115,8 @@ int SingleShotMultiboxDetector::conpute(
     int width = input_img.cols;
     bool use_tf = use_tf_;
     std::string target_frame = target_frame_;
+    bool object_specified_enabled = object_specified_enabled_;
+    std::string specified_object_name = specified_object_name_;
 
     for (int i = 0; i < detect_num; i++) {
         float confidence = detection_mat.ptr<float>(i)[2];
@@ -118,6 +124,7 @@ int SingleShotMultiboxDetector::conpute(
         object_num++;
 
         size_t object_class = (size_t)(detection_mat.ptr<float>(i)[1]);
+        if ( object_specified_enabled && class_names_[object_class] != specified_object_name ) continue;
 
         int x_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[3] * input_img.cols);
         int y_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[4] * input_img.rows);
@@ -148,7 +155,7 @@ int SingleShotMultiboxDetector::conpute(
         int x_ctr = ( obj_bbox.xmin + obj_bbox.xmax ) / 2;
         int y_ctr = ( obj_bbox.ymin + obj_bbox.ymax ) / 2;
         int array_num = ( width * y_ctr ) + x_ctr;
-        
+
         if(std::isnan( input_cloud->points[ array_num ].x ) || std::isnan( input_cloud->points[ array_num ].y ) || std::isnan( input_cloud->points[ array_num ].z )){
             continue;
         }
@@ -178,7 +185,6 @@ int SingleShotMultiboxDetector::conpute(
     header.stamp = ros::Time::now();
     img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, input_img);
     img_bridge.toImageMsg(img_msg);
-    
 
     if( img_show_flag_ ){
         cv::imshow("SSD_Object_Detection Result", input_img);

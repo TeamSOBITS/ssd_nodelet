@@ -24,7 +24,7 @@ namespace ssd_nodelet {
             std::shared_ptr<message_filters::Synchronizer<ImgPCSyncPolicy>> sync_;
 
             ros::Subscriber sub_ctr_;
-            ssd_nodelet::SingleShotMultiboxDetector ssd_;
+            std::unique_ptr<ssd_nodelet::SingleShotMultiboxDetector> ssd_;
             cv_bridge::CvImagePtr cv_ptr_;
             tf::TransformListener tf_listener_;
 
@@ -50,16 +50,17 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     std::string class_names_file_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
     target_frame_ = pnh_.param<std::string>( "target_frame", "base_footprint" );
 
-    ssd_.initDNN( model_configuration_path, model_binary_path, class_names_file_path );
-    ssd_.setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
-    ssd_.setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
-    ssd_.setUseTF( pnh_.param<bool>("use_tf", true), target_frame_ );
-    
+    ssd_.reset( new ssd_nodelet::SingleShotMultiboxDetector( model_configuration_path, model_binary_path, class_names_file_path ) );
+    ssd_->setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
+    ssd_->setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
+    ssd_->setUseTF( pnh_.param<bool>("use_tf", true), target_frame_ );
+    ssd_->specifyDetectionObject( pnh_.param<bool>("object_specified_enabled", false), pnh_.param<std::string>("specified_object_name", "None") );
+
     pub_result_flag_ = pnh_.param<bool>( "ssd_pub_result_image", true );
     execute_flag_ = pnh_.param<bool>("ssd_execute_default", true);
     std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
     std::string sub_cloud_topic_name = pnh_.param<std::string>( "ssd_cloud_topic_name", "/camera/depth/points" );
-    
+
     // message_filters :
     sub_cloud_ .reset ( new message_filters::Subscriber<sensor_msgs::PointCloud2> ( nh_, sub_cloud_topic_name, 1 ) );
     sub_img_ .reset ( new message_filters::Subscriber<sensor_msgs::Image> ( nh_, sub_image_topic_name, 1 ) );
@@ -120,7 +121,7 @@ void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::
         return;
     }
 
-    ssd_.conpute( img_raw, cloud, img_msg->header, cloud_msg->header, detect_object_name, object_bbox_array, object_pose_array, result_img_msg);
+    ssd_->conpute( img_raw, cloud, img_msg->header, cloud_msg->header, detect_object_name, object_bbox_array, object_pose_array, result_img_msg);
 
     pub_object_name_.publish(detect_object_name);
     pub_object_rect_.publish(object_bbox_array);

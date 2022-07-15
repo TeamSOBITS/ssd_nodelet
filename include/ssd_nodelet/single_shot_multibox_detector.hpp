@@ -19,9 +19,9 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/dnn/shape_utils.hpp>
 // for pcl
-#include <pcl_ros/point_cloud.h>            
-#include <pcl_ros/transforms.h>             
-#include <pcl/point_types.h>                
+#include <pcl_ros/point_cloud.h>
+#include <pcl_ros/transforms.h>
+#include <pcl/point_types.h>
 #include <sensor_msgs/PointCloud2.h>
 // for msg pub
 #include <sobit_common_msg/StringArray.h>
@@ -42,30 +42,33 @@ namespace ssd_nodelet {
             cv::dnn::Net net_;
             std::vector<std::string> class_names_;
             tf::TransformBroadcaster br_;
-        
+
             double in_scale_factor_;
             double confidence_threshold_;
             bool img_show_flag_;
             bool use_tf_;
             std::string target_frame_;
             int counter_;
+            bool object_specified_enabled_;
+            std::string specified_object_name_;
 
+            void initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path );
             int readFiles( const std::string& file_name, std::vector<std::string>* str_vec );
 
         public :
-            SingleShotMultiboxDetector( );
-            void initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path );
+            SingleShotMultiboxDetector( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path );
             void setDNNParametr( const double in_scale_factor, const double confidence_threshold );
             void setUseTF( const bool use_tf, const std::string& target_frame );
             void setImgShowFlag( const bool img_show_flag );
-            
-            int conpute(    cv::Mat& input_img, 
+            void specifyDetectionObject( const bool object_specified_enabled, const std::string& specified_object_name );
+
+            int conpute(    cv::Mat& input_img,
                             const std_msgs::Header& header,
                             sobit_common_msg::StringArrayPtr detect_object_name,
                             sobit_common_msg::BoundingBoxesPtr object_bbox_array,
                             sensor_msgs::ImagePtr result_img_msg );
 
-            int conpute(    cv::Mat& input_img, 
+            int conpute(    cv::Mat& input_img,
                             const PointCloud::Ptr input_cloud,
                             const std_msgs::Header& img_header,
                             const std_msgs::Header& pc_header,
@@ -74,6 +77,14 @@ namespace ssd_nodelet {
                             sobit_common_msg::ObjectPoseArrayPtr object_pose_array,
                             sensor_msgs::ImagePtr result_img_msg );
     };
+}
+
+inline void ssd_nodelet::SingleShotMultiboxDetector::initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path ) {
+    // 設定ファイルからモデルの読み込み
+    // 設定ファイル(Caffe)について（https://qiita.com/Hiroki11x/items/7017ac0c03df8011b53c）
+    net_ = cv::dnn::readNetFromCaffe( model_configuration_path, model_binary_path );
+    // 検出する物体のリストの読み込み
+	readFiles( class_names_file_path, &class_names_ );
 }
 
 inline int ssd_nodelet::SingleShotMultiboxDetector::readFiles( const std::string& file_name, std::vector<std::string>* str_vec ) {
@@ -90,14 +101,6 @@ inline int ssd_nodelet::SingleShotMultiboxDetector::readFiles( const std::string
     return 0;
 }
 
-inline void ssd_nodelet::SingleShotMultiboxDetector::initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path ) {
-    // 設定ファイルからモデルの読み込み
-    // 設定ファイル(Caffe)について（https://qiita.com/Hiroki11x/items/7017ac0c03df8011b53c）
-    net_ = cv::dnn::readNetFromCaffe( model_configuration_path, model_binary_path );
-    // 検出する物体のリストの読み込み
-	readFiles( class_names_file_path, &class_names_ );
-}
-
 inline void ssd_nodelet::SingleShotMultiboxDetector::setDNNParametr( const double in_scale_factor, const double confidence_threshold ) {
     in_scale_factor_ = in_scale_factor;
     confidence_threshold_ = confidence_threshold;
@@ -110,6 +113,18 @@ inline void ssd_nodelet::SingleShotMultiboxDetector::setImgShowFlag( const bool 
 inline void ssd_nodelet::SingleShotMultiboxDetector::setUseTF( const bool use_tf, const std::string& target_frame ) {
     use_tf_ = use_tf;
     target_frame_ = target_frame;
+}
+
+inline void ssd_nodelet::SingleShotMultiboxDetector::specifyDetectionObject( const bool object_specified_enabled, const std::string& specified_object_name ) {
+    object_specified_enabled_ = false;
+    for ( const auto& name :class_names_ ) {
+        if ( specified_object_name == name ) {
+            specified_object_name_ = specified_object_name;
+            object_specified_enabled_ = object_specified_enabled;
+            ROS_INFO_STREAM("SSD_Object_Detection -> specified_object_name = " <<  specified_object_name.c_str() );
+        }
+    }
+    return;
 }
 
 #endif

@@ -12,7 +12,7 @@ namespace ssd_nodelet {
             ros::Publisher pub_result_img_;
             ros::Subscriber sub_img_;
             ros::Subscriber sub_ctr_;
-            ssd_nodelet::SingleShotMultiboxDetector ssd_;
+            std::unique_ptr<ssd_nodelet::SingleShotMultiboxDetector> ssd_;
             cv_bridge::CvImagePtr cv_ptr_;
 
             bool pub_result_flag_;
@@ -33,10 +33,11 @@ void ssd_nodelet::ImageSubscriber::onInit() {
     std::string model_binary_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
     std::string class_names_file_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
 
-    ssd_.initDNN( model_configuration_path, model_binary_path, class_names_file_path );
-    ssd_.setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
-    ssd_.setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
-    
+    ssd_.reset( new ssd_nodelet::SingleShotMultiboxDetector( model_configuration_path, model_binary_path, class_names_file_path ) );
+    ssd_->setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
+    ssd_->setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
+    ssd_->specifyDetectionObject( pnh_.param<bool>("object_specified_enabled", false), pnh_.param<std::string>("specified_object_name", "None") );
+
     pub_result_flag_ = pnh_.param<bool>( "ssd_pub_result_image", true );
     bool execute_flag = pnh_.param<bool>("ssd_execute_default", true);
     std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
@@ -79,7 +80,7 @@ void ssd_nodelet::ImageSubscriber::callbackImage( const sensor_msgs::ImageConstP
         return;
     }
 
-    ssd_.conpute( img_raw, img_msg->header, detect_object_name, object_bbox_array, result_img_msg );
+    ssd_->conpute( img_raw, img_msg->header, detect_object_name, object_bbox_array, result_img_msg );
     pub_object_name_.publish(detect_object_name);
     pub_object_rect_.publish(object_bbox_array);
     if ( pub_result_flag_ ) pub_result_img_.publish( result_img_msg );

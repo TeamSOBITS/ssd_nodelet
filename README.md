@@ -10,7 +10,7 @@
 * SSD(Single Shot MultiBox Detector)による物体検出
 * Nodelet実装による高速化
 * 処理速度は、SSD Nodeの約4倍
-* 50Hzでカメラ画像を入力した場合  
+* 50Hzでカメラ画像を入力した場合
     SSD Node
     ```
     average rate: 12.962
@@ -69,6 +69,8 @@ $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 |/ssd_object_detect/ssd_nodelet/ssd_prototxt_name|double|string|prototxtファイルパス|
 |/ssd_object_detect/ssd_nodelet/ssd_caffemodel_name|string|caffeモデルファイルパス|
 |/ssd_object_detect/ssd_nodelet/ssd_class_names_file|string|検出する物体名リストファイルパス|
+|/ssd_object_detect/ssd_nodelet/object_specified_enabled|bool|特定の物体のみ検出を行うか|
+|/ssd_object_detect/ssd_nodelet/specified_object_name|string|検出する特定の物体名(物体ラベルにない名前は却下されます)|
 
 #### Ooly Object Pose
 |パラメータ名|型|意味|
