@@ -25,7 +25,6 @@ namespace ssd_nodelet {
 }
 
 void ssd_nodelet::ImageSubscriber::onInit() {
-    NODELET_INFO("Listener Init");
     nh_ = getNodeHandle();
     pnh_ = getPrivateNodeHandle();
 

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ssd_nodelet)
 
 #魔法の1行
-add_compile_options(-std=c++14 -O2 -g -Wall)
+add_compile_options(-std=c++14 -O3 -g -Wall)
 
 find_package(OpenCV REQUIRED)
 
