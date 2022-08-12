@@ -37,6 +37,21 @@ typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloud;
 
 namespace ssd_nodelet {
+    class PoseResult {
+        public :
+            sobit_common_msg::StringArrayPtr detect_object_name;
+            sobit_common_msg::BoundingBoxesPtr object_bbox_array;
+            sobit_common_msg::ObjectPoseArrayPtr object_pose_array;
+            sensor_msgs::ImagePtr result_img_msg;
+            PoseResult() {
+                detect_object_name.reset( new sobit_common_msg::StringArray );
+                object_bbox_array.reset( new sobit_common_msg::BoundingBoxes );
+                object_pose_array.reset( new sobit_common_msg::ObjectPoseArray );
+                result_img_msg.reset( new sensor_msgs::Image );
+            }
+    };
+
+
     class SingleShotMultiboxDetector {
         private :
             cv::dnn::Net net_;
@@ -70,12 +85,8 @@ namespace ssd_nodelet {
 
             int conpute(    cv::Mat& input_img,
                             const PointCloud::Ptr input_cloud,
-                            const std_msgs::Header& img_header,
-                            const std_msgs::Header& pc_header,
-                            sobit_common_msg::StringArrayPtr detect_object_name,
-                            sobit_common_msg::BoundingBoxesPtr object_bbox_array,
-                            sobit_common_msg::ObjectPoseArrayPtr object_pose_array,
-                            sensor_msgs::ImagePtr result_img_msg );
+                            const std_msgs::Header& header,
+                            ssd_nodelet::PoseResult* result );
     };
 }
 

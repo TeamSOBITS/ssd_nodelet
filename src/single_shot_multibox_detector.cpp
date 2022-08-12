@@ -11,7 +11,7 @@ SingleShotMultiboxDetector::SingleShotMultiboxDetector( const std::string& model
     counter_ = 0;
 }
 
-int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img, 
+int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
                                             const std_msgs::Header& header,
                                             sobit_common_msg::StringArrayPtr detect_object_name,
                                             sobit_common_msg::BoundingBoxesPtr object_bbox_array,
@@ -29,15 +29,13 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
     cv::Mat detection = net_.forward("detection_out");
     cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
-    sobit_common_msg::StringArrayPtr object_name(new sobit_common_msg::StringArray);
-    sobit_common_msg::BoundingBoxesPtr bbox_array(new sobit_common_msg::BoundingBoxes);
     int object_num = 0;
     int detect_num = detection_mat.rows;
     double confidence_threshold = confidence_threshold_;
     bool object_specified_enabled = object_specified_enabled_;
     std::string specified_object_name = specified_object_name_;
 
-    for (int i = 0; i < detect_num; i++) {
+    for (int i = 0; i < detect_num; ++i ) {
         float confidence = detection_mat.ptr<float>(i)[2];
         if ( confidence <= confidence_threshold ) continue;
         object_num++;
@@ -58,8 +56,8 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
         obj_bbox.ymax = object_area.y + object_area.height;
         obj_bbox.probability = confidence;
         obj_bbox.Class = class_names_[object_class];
-        bbox_array->bounding_boxes.push_back(obj_bbox);
-        object_name->data.push_back(class_names_[object_class]);
+        object_bbox_array->bounding_boxes.emplace_back(obj_bbox);
+        detect_object_name->data.emplace_back(class_names_[object_class]);
 
         cv::rectangle(input_img, object_area, cv::Scalar(0, 255, 0) ,2);
         cv::String label = class_names_[object_class] + ": " + std::to_string(confidence);
@@ -69,34 +67,27 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
         cv::rectangle(input_img, label_rect, cv::Scalar::all(255), cv::FILLED);
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
     }
-    bbox_array->header = header;
+    object_bbox_array->header = header;
     sensor_msgs::Image img_msg;
     cv_bridge::CvImage img_bridge;
     std_msgs::Header curt_header;
     curt_header.seq = counter_;
     curt_header.stamp = ros::Time::now();
     img_bridge = cv_bridge::CvImage(curt_header, sensor_msgs::image_encodings::BGR8, input_img);
-    img_bridge.toImageMsg(img_msg);
+    img_bridge.toImageMsg(*result_img_msg);
 
     if( img_show_flag_ ){
         cv::imshow("SSD_Object_Detection Result", input_img);
         cv::waitKey(1);
     }
-    *detect_object_name = *object_name;
-    *object_bbox_array = *bbox_array;
-    *result_img_msg = img_msg;
     return object_num;
 }
 
 int SingleShotMultiboxDetector::conpute(
     cv::Mat& input_img,
     const PointCloud::Ptr input_cloud,
-    const std_msgs::Header& img_header,
-    const std_msgs::Header& pc_header,
-    sobit_common_msg::StringArrayPtr detect_object_name,
-    sobit_common_msg::BoundingBoxesPtr object_bbox_array,
-    sobit_common_msg::ObjectPoseArrayPtr object_pose_array,
-    sensor_msgs::ImagePtr result_img_msg ) {
+    const std_msgs::Header& header,
+    ssd_nodelet::PoseResult* result ) {
     cv::Mat image_resize;
     // RESIZE_WIDTH x RESIZE_HEIGHT(300x300)に画像をリサイズ、画素値を調整
     cv::resize(input_img, image_resize, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT));
@@ -108,9 +99,6 @@ int SingleShotMultiboxDetector::conpute(
     cv::Mat detection = net_.forward("detection_out");
     cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
-    sobit_common_msg::StringArrayPtr object_name(new sobit_common_msg::StringArray);
-    sobit_common_msg::BoundingBoxesPtr bbox_array(new sobit_common_msg::BoundingBoxes);
-    sobit_common_msg::ObjectPoseArrayPtr obj_poses(new sobit_common_msg::ObjectPoseArray);
     int object_num = 0;
     int detect_num = detection_mat.rows;
     int width = input_img.cols;
@@ -120,7 +108,7 @@ int SingleShotMultiboxDetector::conpute(
     bool object_specified_enabled = object_specified_enabled_;
     std::string specified_object_name = specified_object_name_;
 
-    for (int i = 0; i < detect_num; i++) {
+    for (int i = 0; i < detect_num; ++i ) {
         float confidence = detection_mat.ptr<float>(i)[2];
         if ( confidence <= confidence_threshold ) continue;
         object_num++;
@@ -141,8 +129,8 @@ int SingleShotMultiboxDetector::conpute(
         obj_bbox.ymax = object_area.y + object_area.height;
         obj_bbox.probability = confidence;
         obj_bbox.Class = class_names_[object_class];
-        bbox_array->bounding_boxes.push_back(obj_bbox);
-        object_name->data.push_back(class_names_[object_class]);
+        result->object_bbox_array->bounding_boxes.emplace_back(obj_bbox);
+        result->detect_object_name->data.emplace_back(class_names_[object_class]);
 
         cv::rectangle(input_img, object_area, cv::Scalar(0, 255, 0) ,2);
         cv::String label = class_names_[object_class] + ": " + std::to_string(confidence);
@@ -165,7 +153,7 @@ int SingleShotMultiboxDetector::conpute(
         obj_pose.pose.position.y = input_cloud->points[ array_num ].y;
         obj_pose.pose.position.z = input_cloud->points[ array_num ].z;
         obj_pose.detect_id = object_num;
-        obj_poses->object_poses.push_back( obj_pose );
+        result->object_pose_array->object_poses.emplace_back( obj_pose );
 
         if ( !use_tf ) continue;
         br_.sendTransform(
@@ -177,24 +165,19 @@ int SingleShotMultiboxDetector::conpute(
             )
         );
     }
-    bbox_array->header = img_header;
-    obj_poses->header = pc_header;
-    obj_poses->header.frame_id = target_frame;
-    sensor_msgs::Image img_msg;
+    result->object_bbox_array->header = header;
+    result->object_pose_array->header = header;
+    result->object_pose_array->header.frame_id = target_frame;
     cv_bridge::CvImage img_bridge;
-    std_msgs::Header header;
-    header.seq = counter_;
-    header.stamp = ros::Time::now();
-    img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, input_img);
-    img_bridge.toImageMsg(img_msg);
+    std_msgs::Header curt_header;
+    curt_header.seq = counter_;
+    curt_header.stamp = ros::Time::now();
+    img_bridge = cv_bridge::CvImage(curt_header, sensor_msgs::image_encodings::BGR8, input_img);
+    img_bridge.toImageMsg(*result->result_img_msg);
 
     if( img_show_flag_ ){
         cv::imshow("SSD_Object_Detection Result", input_img);
         cv::waitKey(23);
     }
-    *detect_object_name = *object_name;
-    *object_bbox_array = *bbox_array;
-    *object_pose_array = *obj_poses;
-    *result_img_msg = img_msg;
     return object_num;
 }

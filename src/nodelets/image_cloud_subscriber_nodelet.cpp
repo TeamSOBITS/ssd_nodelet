@@ -33,6 +33,9 @@ namespace ssd_nodelet {
             int cloud_width_;
             std::string target_frame_;
 
+            cv::Mat img_raw_;
+            PointCloud::Ptr cloud_;
+
         public:
             virtual void onInit();
             void callbackControl( const std_msgs::Bool& msg );
@@ -71,6 +74,8 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("objects_rect", 1);
     pub_object_pose_ = nh_.advertise<sobit_common_msg::ObjectPoseArray> ("object_pose", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
+
+    cloud_.reset( new PointCloud() );
 }
 
 void ssd_nodelet::ImageCloudSubscriber::callbackControl( const std_msgs::Bool& msg ) {
@@ -83,46 +88,37 @@ void ssd_nodelet::ImageCloudSubscriber::callbackControl( const std_msgs::Bool& m
 
 void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::PointCloud2ConstPtr &cloud_msg, const sensor_msgs::ImageConstPtr &img_msg ) {
     if(execute_flag_ == false){	return;	}
-
-    cv::Mat img_raw;
-    sobit_common_msg::StringArrayPtr detect_object_name(new sobit_common_msg::StringArray);
-    sobit_common_msg::BoundingBoxesPtr object_bbox_array(new sobit_common_msg::BoundingBoxes);
-    sobit_common_msg::ObjectPoseArrayPtr object_pose_array(new sobit_common_msg::ObjectPoseArray);
-    sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
-    PointCloud::Ptr cloud (new PointCloud());
-    std::string target_frame = target_frame_;
+    ssd_nodelet::PoseResult result;
     PointCloud cloud_src;
 
     pcl::fromROSMsg<PointT>( *cloud_msg, cloud_src );
-    if (target_frame.empty() == false ){
-        try {
-            tf_listener_.waitForTransform(target_frame, cloud_src.header.frame_id, ros::Time(0), ros::Duration(1.0));
-            pcl_ros::transformPointCloud(target_frame, ros::Time(0), cloud_src, cloud_src.header.frame_id,  *cloud, tf_listener_);
-            cloud->header.frame_id = target_frame;
-        } catch (const tf::TransformException& ex) {
-            ROS_ERROR("%s", ex.what());
-            return;
-        }
-    } else ROS_ERROR("Please set the target frame.");
+    try {
+        tf_listener_.waitForTransform(target_frame_, cloud_src.header.frame_id, ros::Time(0), ros::Duration(1.0));
+        pcl_ros::transformPointCloud(target_frame_, ros::Time(0), cloud_src, cloud_src.header.frame_id,  *cloud_, tf_listener_);
+        cloud_->header.frame_id = target_frame_;
+    } catch (const tf::TransformException& ex) {
+        NODELET_ERROR("%s", ex.what());
+        return;
+    }
 
     try {
         cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );
-        img_raw = cv_ptr_->image.clone();
+        img_raw_ = cv_ptr_->image.clone();
     } catch ( cv_bridge::Exception& e ) {
         NODELET_ERROR("cv_bridge exception: %s", e.what());
         return;
     }
-    if (img_raw.empty() == true) {
+    if (img_raw_.empty() == true) {
         NODELET_ERROR("SSD_Object_Detection -> input_image error");
         return;
     }
 
-    ssd_->conpute( img_raw, cloud, img_msg->header, cloud_msg->header, detect_object_name, object_bbox_array, object_pose_array, result_img_msg );
+    ssd_->conpute( img_raw_, cloud_, img_msg->header, &result );
     // ssd_->conpute( img_raw, img_msg->header, detect_object_name, object_bbox_array, result_img_msg );
-    pub_object_name_.publish(detect_object_name);
-    pub_object_rect_.publish(object_bbox_array);
-    pub_object_pose_.publish(object_pose_array);
-    if ( pub_result_flag_ ) pub_result_img_.publish( result_img_msg );
+    pub_object_name_.publish(result.detect_object_name);
+    pub_object_rect_.publish(result.object_bbox_array);
+    pub_object_pose_.publish(result.object_pose_array);
+    if ( pub_result_flag_ ) pub_result_img_.publish( result.result_img_msg );
     return;
 }
 
