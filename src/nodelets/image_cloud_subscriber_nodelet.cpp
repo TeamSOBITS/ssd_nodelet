@@ -70,8 +70,8 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     sync_ ->registerCallback ( boost::bind( &ImageCloudSubscriber::callbackSenserData, this, _1, _2 ) );
     sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageCloudSubscriber::callbackControl, this);
 
-    pub_object_name_  = nh_.advertise<sobit_common_msg::StringArray> ("objects_name", 1);
-    pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("objects_rect", 1);
+    pub_object_name_  = nh_.advertise<sobit_common_msg::StringArray> ("object_name", 1);
+    pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("object_rect", 1);
     pub_object_pose_ = nh_.advertise<sobit_common_msg::ObjectPoseArray> ("object_pose", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
 

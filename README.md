@@ -38,8 +38,8 @@ $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 |トピック名|型|意味|
 |---|---|---|
 |/ssd_object_detect/detect_result|sensor_msgs/Image|出力画像(検出結果)|
-|/ssd_object_detect/objects_name|sobit_common_msg/StringArray|検出物体の名前のリスト|
-|/ssd_object_detect/objects_rect|sobit_common_msg/BoundingBoxes|検出物体のバウンディングボックス情報|
+|/ssd_object_detect/object_name|sobit_common_msg/StringArray|検出物体の名前のリスト|
+|/ssd_object_detect/object_rect|sobit_common_msg/BoundingBoxes|検出物体のバウンディングボックス情報|
 
 #### Ooly Object Pose
 |トピック名|型|意味|
