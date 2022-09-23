@@ -46,13 +46,29 @@ $ catkin_make
 ```
 
 ## How To Use
-### Object Detect
+### Camera
+```bash
+$ roslaunch ssd_nodelet camera_720p_16_9.launch
+# 他に
+# camera_1080p_16_9.launch  camera_480p_16_9.launch   camera_720p_16_9.launch
+# camera_1080p_3_2.launch   camera_480p_3_2.launch    camera_720p_3_2.launch
+```
+※以下のようなエラーが発生した場合
 ```python
+[ERROR] [1663911409.917317256]: Permission denied opening /dev/bus/usb/001/002
+```
+次のを実行してください
+```python
+sudo chmod o+w /dev/bus/usb/001/002
+```
+
+### Object Detect
+```bash
 $ roslaunch ssd_nodelet face_detect.launch  <- face detect mode
 $ roslaunch ssd_nodelet object_detect.launch  <- object detect mode
 ```
 ### Object Pose Detect
-```python
+```bash
 $ roslaunch ssd_nodelet face_detect_pose.launch  <- face detect mode
 $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 ```
