@@ -24,12 +24,12 @@
 
 ## How To Use
 ### Object Detect
-```bash
+```python
 $ roslaunch ssd_nodelet face_detect.launch  <- face detect mode
 $ roslaunch ssd_nodelet object_detect.launch  <- object detect mode
 ```
 ### Object Pose Detect
-```bash
+```python
 $ roslaunch ssd_nodelet face_detect_pose.launch  <- face detect mode
 $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 ```
