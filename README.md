@@ -22,6 +22,29 @@
         min: 0.015s max: 0.027s std dev: 0.00243s window: 49
     ```
 
+## Setup
+### ホスト環境の場合
+```python
+$ cd ~/catkin_ws/src/ssd_nodelet/
+$ bash setup.sh
+$ cd ~/catkin_ws
+$ catkin_make
+```
+
+### Docker環境の場合
+- ホスト環境
+```python 
+$ cd ~/〇〇/〇〇/src/ssd_nodelet/
+$ bash setup_rules.sh
+```
+- Docker環境
+```python 
+$ cd ~/catkin_ws/src/ssd_nodelet/
+$ bash setup.sh
+$ cd ~/catkin_ws
+$ catkin_make
+```
+
 ## How To Use
 ### Object Detect
 ```python
