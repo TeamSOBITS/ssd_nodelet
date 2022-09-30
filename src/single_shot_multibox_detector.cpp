@@ -146,22 +146,6 @@ int SingleShotMultiboxDetector::conpute(
         int y_ctr = ( obj_bbox.ymin + obj_bbox.ymax ) / 2;
         int array_num = ( width * y_ctr ) + x_ctr;
 
-        // cv::circle(input_img, cv::Point(obj_bbox.xmin, obj_bbox.ymin), 15, cv::Scalar(255,0,0), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(obj_bbox.xmax, obj_bbox.ymax), 15, cv::Scalar(0,255,0), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(obj_bbox.xmin, obj_bbox.ymax), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(obj_bbox.xmax, obj_bbox.ymin), 15, cv::Scalar(255,255,0), -1, cv::LINE_AA);
-        int b = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[0];
-        int g = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[1];
-        int r = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[2];
-        cv::circle(input_img, cv::Point(x_ctr, y_ctr), 15, cv::Scalar(b,g,r), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(x_left_bottom, y_left_bottom), 15, cv::Scalar(b,g,r), -1, cv::LINE_AA);
-
-        // cv::circle(input_img, cv::Point(x_ctr, y_ctr_min), 10, cv::Scalar(0,0,255), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(x_ctr, y_ctr_max), 10, cv::Scalar(0,0,255), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(x_ctr_min, y_ctr), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
-        // cv::circle(input_img, cv::Point(x_ctr_max, y_ctr), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
-
-
         if(std::isnan( input_cloud->points[ array_num ].x ) || std::isnan( input_cloud->points[ array_num ].y ) || std::isnan( input_cloud->points[ array_num ].z )){
             int x_ctr_min = ( x_ctr + obj_bbox.xmin ) / 2;
             int x_ctr_max = ( x_ctr + obj_bbox.xmax ) / 2;
