@@ -146,12 +146,65 @@ int SingleShotMultiboxDetector::conpute(
         int y_ctr = ( obj_bbox.ymin + obj_bbox.ymax ) / 2;
         int array_num = ( width * y_ctr ) + x_ctr;
 
+        // cv::circle(input_img, cv::Point(obj_bbox.xmin, obj_bbox.ymin), 15, cv::Scalar(255,0,0), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(obj_bbox.xmax, obj_bbox.ymax), 15, cv::Scalar(0,255,0), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(obj_bbox.xmin, obj_bbox.ymax), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(obj_bbox.xmax, obj_bbox.ymin), 15, cv::Scalar(255,255,0), -1, cv::LINE_AA);
+        int b = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[0];
+        int g = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[1];
+        int r = input_img.at<cv::Vec3b>(x_ctr, y_ctr)[2];
+        cv::circle(input_img, cv::Point(x_ctr, y_ctr), 15, cv::Scalar(b,g,r), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(x_left_bottom, y_left_bottom), 15, cv::Scalar(b,g,r), -1, cv::LINE_AA);
+
+        // cv::circle(input_img, cv::Point(x_ctr, y_ctr_min), 10, cv::Scalar(0,0,255), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(x_ctr, y_ctr_max), 10, cv::Scalar(0,0,255), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(x_ctr_min, y_ctr), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
+        // cv::circle(input_img, cv::Point(x_ctr_max, y_ctr), 15, cv::Scalar(0,0,255), -1, cv::LINE_AA);
+
+
         if(std::isnan( input_cloud->points[ array_num ].x ) || std::isnan( input_cloud->points[ array_num ].y ) || std::isnan( input_cloud->points[ array_num ].z )){
-            continue;
+            int x_ctr_min = ( x_ctr + obj_bbox.xmin ) / 2;
+            int x_ctr_max = ( x_ctr + obj_bbox.xmax ) / 2;
+            int y_ctr_min = ( y_ctr + obj_bbox.ymin ) / 2;
+            int y_ctr_max = ( y_ctr + obj_bbox.ymax ) / 2;
+
+            int array_num_y_ctr_min = ( width * y_ctr_min ) + x_ctr;
+            int array_num_y_ctr_max = ( width * y_ctr_max ) + x_ctr;
+            int array_num_x_ctr_min = ( width * y_ctr ) + x_ctr_min;
+            int array_num_x_ctr_max = ( width * y_ctr ) + x_ctr_max;
+
+            int num_pt = 0;
+            PointT pt;
+            if( !(std::isnan(input_cloud->points[ array_num_y_ctr_min ].x )||std::isnan(input_cloud->points[ array_num_y_ctr_min ].y)||std::isnan( input_cloud->points[array_num_y_ctr_min].z))) {
+                num_pt++;
+                pt.x += input_cloud->points[ array_num_y_ctr_min ].x;
+                pt.y += input_cloud->points[ array_num_y_ctr_min ].y;
+                pt.z += input_cloud->points[ array_num_y_ctr_min ].z;
+            } if( !(std::isnan(input_cloud->points[ array_num_y_ctr_max ].x )||std::isnan(input_cloud->points[ array_num_y_ctr_max ].y)||std::isnan( input_cloud->points[array_num_y_ctr_max].z))) {
+                num_pt++;
+                pt.x += input_cloud->points[ array_num_y_ctr_max ].x;
+                pt.y += input_cloud->points[ array_num_y_ctr_max ].y;
+                pt.z += input_cloud->points[ array_num_y_ctr_max ].z;
+            } if(!(std::isnan(input_cloud->points[ array_num_x_ctr_min ].x )||std::isnan(input_cloud->points[ array_num_x_ctr_min ].y)||std::isnan( input_cloud->points[array_num_x_ctr_min].z))) {
+                num_pt++;
+                pt.x += input_cloud->points[ array_num_x_ctr_min ].x;
+                pt.y += input_cloud->points[ array_num_x_ctr_min ].y;
+                pt.z += input_cloud->points[ array_num_x_ctr_min ].z;
+            } if(!(std::isnan(input_cloud->points[ array_num_x_ctr_max ].x )||std::isnan(input_cloud->points[ array_num_x_ctr_max ].y)||std::isnan( input_cloud->points[array_num_x_ctr_max].z))) {
+                num_pt++;
+                pt.x += input_cloud->points[ array_num_x_ctr_max ].x;
+                pt.y += input_cloud->points[ array_num_x_ctr_max ].y;
+                pt.z += input_cloud->points[ array_num_x_ctr_max ].z;
+            }
+            if ( num_pt == 0 ) continue;
+            obj_pose.pose.position.x = pt.x/num_pt;
+            obj_pose.pose.position.y = pt.y/num_pt;
+            obj_pose.pose.position.z = pt.z/num_pt;
+        } else {
+            obj_pose.pose.position.x = input_cloud->points[ array_num ].x;
+            obj_pose.pose.position.y = input_cloud->points[ array_num ].y;
+            obj_pose.pose.position.z = input_cloud->points[ array_num ].z;
         }
-        obj_pose.pose.position.x = input_cloud->points[ array_num ].x;
-        obj_pose.pose.position.y = input_cloud->points[ array_num ].y;
-        obj_pose.pose.position.z = input_cloud->points[ array_num ].z;
         obj_pose.detect_id = object_num;
         result->object_pose_array->object_poses.emplace_back( obj_pose );
 
