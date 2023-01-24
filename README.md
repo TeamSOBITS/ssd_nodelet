@@ -9,7 +9,7 @@
 ## About
 * SSD(Single Shot MultiBox Detector)による物体検出
 * Nodelet実装による高速化
-* 処理速度は、SSD Nodeの約4倍
+* 処理速度は、[SSD Node](https://github.com/TeamSOBITS/ssd_node)の約4倍
 * 50Hzでカメラ画像を入力した場合
     SSD Node
     ```
