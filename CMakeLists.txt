@@ -72,6 +72,8 @@ add_library(${PROJECT_NAME} src/nodelets/image_subscriber_nodelet.cpp
                             src/single_shot_multibox_detector.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 install(
   TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
