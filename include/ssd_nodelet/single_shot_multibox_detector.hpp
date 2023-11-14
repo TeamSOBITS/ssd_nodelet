@@ -31,7 +31,7 @@
 
 constexpr size_t RESIZE_WIDTH = 300;
 constexpr size_t RESIZE_HEIGHT = 300;
-constexpr float  MEAN_VAL = 127.5;//最大輝度の半分の値
+constexpr float  MEAN_VAL = 127.5;//Half of the maximum brightness value
 
 typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloud;
@@ -91,10 +91,10 @@ inline int ssd_nodelet::SingleShotMultiboxDetector::readFiles( const std::string
 }
 
 inline void ssd_nodelet::SingleShotMultiboxDetector::initDNN( const std::string& model_configuration_path, const std::string& model_binary_path, const std::string& class_names_file_path ) {
-    // 設定ファイルからモデルの読み込み
-    // 設定ファイル(Caffe)について（https://qiita.com/Hiroki11x/items/7017ac0c03df8011b53c）
+    // Loading a model from a configuration file
+    // About the configuration file (Caffe)（https://qiita.com/Hiroki11x/items/7017ac0c03df8011b53c）
     net_ = cv::dnn::readNetFromCaffe( model_configuration_path, model_binary_path );
-    // 検出する物体のリストの読み込み
+    // Loading a list of objects to be detected
 	readFiles( class_names_file_path, &class_names_ );
 }
 
