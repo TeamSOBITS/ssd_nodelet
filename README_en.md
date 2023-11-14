@@ -10,39 +10,38 @@
 
 # SSD Nodelet
 
-<!-- 目次 -->
+<!-- TABLE OF CONTENTS -->
 <details>
-  <summary>目次</summary>
+  <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#概要">概要</a>
+      <a href="#introduction">Introduction</a>
     </li>
     <li>
-      <a href="#環境構築">環境構築</a>
+      <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#環境条件">環境条件</a></li>
-        <li><a href="#インストール方法">インストール方法</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#実行・操作方法">実行・操作方法</a></li>
-    <li><a href="#マイルストーン">マイルストーン</a></li>
-    <li><a href="#変更履歴">変更履歴</a></li>
+    <li><a href="#launch-and-usage">Launch and Usage</a></li>
+    <li><a href="#milestone">Milestone</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#参考文献">参考文献</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
 
 
-<!-- レポジトリの概要 -->
-## 概要
+<!-- INTRODUCTION -->
+## Introduction
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-* SSD(Single Shot MultiBox Detector)による物体検出
-* Nodelet実装による高速化
-* 50Hzでカメラ画像を入力した場合
+* Object detection by SSD (Single Shot MultiBox Detector)
+* High speed by Nodelet implementation
+* When camera image is input at 50Hz
     SSD Node
     ```
     average rate: 12.962
@@ -62,27 +61,27 @@
 </div> 
 
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- セットアップ -->
-## セットアップ
+<!-- GETTING STARTED -->
+## Getting Started
 
-ここで，本レポジトリのセットアップ方法について説明します．
+This section describes how to set up this repository.
 
-### 環境条件
+### Prerequisites
 
-正常動作のため，以下の必要な環境を整えてください．
+The following environment must be in place for normal operation.
 
 | System  | Version |
 | ------------- | ------------- |
 | Ubuntu | 18.04 |
 | ROS | Melodic Morenia |
 
-### インストール方法
+### Installation
 
-### ホスト環境の場合
+### For host environment
 ```python
 $ cd ~/catkin_ws/src/ssd_nodelet/
 $ bash setup.sh
@@ -90,13 +89,13 @@ $ cd ~/catkin_ws
 $ catkin_make
 ```
 
-### Docker環境の場合
-- ホスト環境
+### For Docker environment
+- Host Environments
 ```python 
 $ cd ~/〇〇/〇〇/src/ssd_nodelet/
 $ bash setup_rules.sh
 ```
-- Docker環境
+- Docker Environments
 ```python 
 $ cd ~/catkin_ws/src/ssd_nodelet/
 $ bash setup.sh
@@ -104,25 +103,25 @@ $ cd ~/catkin_ws
 $ catkin_make
 ```
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- 実行・操作方法 -->
-## 実行・操作方法
+<!-- LAUNCH AND USAGE EXAMPLES -->
+## Launch and Usage
 
 ### Camera
 ```bash
 $ roslaunch ssd_nodelet camera_720p_16_9.launch
-# 他に
+# In addition
 # camera_1080p_16_9.launch  camera_480p_16_9.launch   camera_720p_16_9.launch
 # camera_1080p_3_2.launch   camera_480p_3_2.launch    camera_720p_3_2.launch
 ```
-※以下のようなエラーが発生した場合
+※If the following error occurs
 ```python
 [ERROR] [1663911409.917317256]: Permission denied opening /dev/bus/usb/001/002
 ```
-次のコードを実行してください
+Execute the following code
 ```python
 sudo chmod o+w /dev/bus/usb/001/002
 ```
@@ -139,72 +138,71 @@ $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 ```
 
 ### Publications:
-|トピック名|型|意味|
+|Topic Name|Type|Meaning|
 |---|---|---|
-|/ssd_object_detect/detect_result|sensor_msgs/Image|出力画像(検出結果)|
-|/ssd_object_detect/object_name|sobit_common_msg/StringArray|検出物体の名前のリスト|
-|/ssd_object_detect/object_rect|sobit_common_msg/BoundingBoxes|検出物体のバウンディングボックス情報|
+|/ssd_object_detect/detect_result|sensor_msgs/Image|Output image (detection result)|
+|/ssd_object_detect/object_name|sobit_common_msg/StringArray|List of detected object names|
+|/ssd_object_detect/object_rect|sobit_common_msg/BoundingBoxes|Bounding box information of detected object|
 
 #### Only Object Pose
-|トピック名|型|意味|
+|Topic Name|Type|Meaning|
 |---|---|---|
-|/ssd_object_detect/object_pose|sobit_common_msg/ObjectPoseArray|検出物体の位置|
+|/ssd_object_detect/object_pose|sobit_common_msg/ObjectPoseArray|Position of detected object|
 
 ### Subscriptions:
-|トピック名|型|意味|
+|Topic Name|Type|Meaning|
 |---|---|---|
-|/camera/rgb/image_raw|sensor_msgs/Image|入力画像|
-|/ssd_object_detect/detect_ctrl|std_msgs/Bool|検出のオンオフ|
+|/camera/rgb/image_raw|sensor_msgs/Image|Input image|
+|/ssd_object_detect/detect_ctrl|std_msgs/Bool|Detection on/off|
 
 #### Only Object Pose
-|トピック名|型|意味|
+|Topic Name|Type|Meaning|
 |---|---|---|
-|/camera/depth/points|sensor_msgs/PointCloud2|入力点群|
+|/camera/depth/points|sensor_msgs/PointCloud2|Input point cloud|
 
 ### Parameters:
-|パラメータ名|型|意味|
+|Parameter Name|Type|Meaning|
 |---|---|---|
-|/ssd_object_detect/ssd_nodelet/ssd_img_show_flag|bool|検出画像の描画をするか|
-|/ssd_object_detect/ssd_nodelet/ssd_execute_default|bool|起動時に検出を開始するか|
-|/ssd_object_detect/ssd_nodelet/ssd_pub_result_image|bool|/detect_resultをパブリッシュをするかどうか|
-|/ssd_object_detect/ssd_nodelet/ssd_image_topic_name|string|入力画像のトピック名|
-|/ssd_object_detect/ssd_nodelet/ssd_in_scale_factor|double|Caffeで扱うBlob形式の変換時のスケールパラメータ|
-|/ssd_object_detect/ssd_nodelet/ssd_confidence_threshold|double|検出結果リストに追加される結果の信頼度の閾値|
-|/ssd_object_detect/ssd_nodelet/ssd_prototxt_name|double|string|prototxtファイルパス|
-|/ssd_object_detect/ssd_nodelet/ssd_caffemodel_name|string|caffeモデルファイルパス|
-|/ssd_object_detect/ssd_nodelet/ssd_class_names_file|string|検出する物体名リストファイルパス|
-|/ssd_object_detect/ssd_nodelet/object_specified_enabled|bool|特定の物体のみ検出を行うか|
-|/ssd_object_detect/ssd_nodelet/specified_object_name|string|検出する特定の物体名(物体ラベルにない名前は却下されます)|
+|/ssd_object_detect/ssd_nodelet/ssd_img_show_flag|bool|Whether to draw the detection image or not|
+|/ssd_object_detect/ssd_nodelet/ssd_execute_default|bool|Whether to initiate detection at startup|
+|/ssd_object_detect/ssd_nodelet/ssd_pub_result_image|bool|Whether to publish /detect_result|
+|/ssd_object_detect/ssd_nodelet/ssd_image_topic_name|string|Topic name of input image|
+|/ssd_object_detect/ssd_nodelet/ssd_in_scale_factor|double|Scale parameter when converting Blob format handled by Caffe|
+|/ssd_object_detect/ssd_nodelet/ssd_confidence_threshold|double|Confidence threshold for results to be added to the detection results list|
+|/ssd_object_detect/ssd_nodelet/ssd_prototxt_name|double|string|prototxt file path|
+|/ssd_object_detect/ssd_nodelet/ssd_caffemodel_name|string|caffe model file path|
+|/ssd_object_detect/ssd_nodelet/ssd_class_names_file|string|Object name list file path to detect|
+|/ssd_object_detect/ssd_nodelet/object_specified_enabled|bool|Whether to perform detection only on specific objects|
+|/ssd_object_detect/ssd_nodelet/specified_object_name|string|Specific object name to be detected (names not in the object label will be rejected)|
 
 #### Only Object Pose
-|パラメータ名|型|意味|
+|Parameter Name|Type|Meaning|
 |---|---|---|
-|/ssd_object_detect/ssd_nodelet/use_tf|bool|tfによる座標登録するか|
-|/ssd_object_detect/ssd_nodelet/target_frame|string|基準座標フレーム名|
-|/ssd_object_detect/ssd_nodelet/ssd_cloud_topic_name|string|入力点群のトピック名|
+|/ssd_object_detect/ssd_nodelet/use_tf|bool|Whether to register coordinates by tf or not|
+|/ssd_object_detect/ssd_nodelet/target_frame|string|Reference Coordinate Frame Name|
+|/ssd_object_detect/ssd_nodelet/ssd_cloud_topic_name|string|Topic name of input point cloud|
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<!-- MILESTONE -->
+## Milestone
+
+- [ ] Enhanced documentation 
+
+See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- マイルストーン -->
-## マイルストーン
-
-- [ ] ドキュメンテーションの充実 
-
-現時点のバッグや新規機能の依頼を確認するために[Issueページ](https://github.com/github_username/repo_name/issues) をご覧ください．
-
-<p align="right">(<a href="#readme-top">上に</a>)</p>
-
-
-
-<!-- 変更履歴 -->
-## 変更履歴
+<!-- CHANGE-LOG -->
+## Change-Log
 
 - 1.0: OSS (2023-11-14)
-  - READMEの充実
+  - Enhanced README
+
 
 <!-- CONTRIBUTING -->
 <!-- ## Contributing
@@ -220,7 +218,7 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
@@ -229,16 +227,16 @@ Don't forget to give the project a star! Thanks again!
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
-<!-- 参考文献 -->
-## 参考文献
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
 
 * [SSD: Single Shot MultiBox Detector](https://www.cs.unc.edu/~wliu/papers/ssd.pdf)
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
