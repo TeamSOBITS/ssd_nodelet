@@ -16,16 +16,16 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
                                             sobit_common_msg::StringArrayPtr detect_object_name,
                                             sobit_common_msg::BoundingBoxesPtr object_bbox_array,
                                             sensor_msgs::ImagePtr result_img_msg ) {
-    // 参照：https://qiita.com/wellflat/items/b32aff49846c30be8c1b
+    // Reference：https://qiita.com/wellflat/items/b32aff49846c30be8c1b
 
     cv::Mat image_resize;
-    // RESIZE_WIDTH x RESIZE_HEIGHT(300x300)に画像をリサイズ、画素値を調整
+    // Resize image to RESIZE_WIDTH x RESIZE_HEIGHT(300x300), adjust pixel values
     cv::resize(input_img, image_resize, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT));
-    // Caffeで扱うBlob形式に変換 (実体はcv::Matのラッパークラス)
+    // Converted to Blob format handled by Caffe (entity is a wrapper class for cv::Mat)
     cv::Mat inputBlob = cv::dnn::blobFromImage(image_resize, in_scale_factor_, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT), MEAN_VAL, false);
-    // 入力層に画像を入力
+    // Input image to input layer
     net_.setInput(inputBlob, "data");
-    // フォワードパス(順伝播)の計算(https://iwaki2009.blogspot.com/2017/10/yolo-v2-opencvi-am-investigating-output.html)
+    // Forward path (forward propagation) calculation (https://iwaki2009.blogspot.com/2017/10/yolo-v2-opencvi-am-investigating-output.html)
     cv::Mat detection = net_.forward("detection_out");
     cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
@@ -89,13 +89,13 @@ int SingleShotMultiboxDetector::conpute(
     const std_msgs::Header& header,
     ssd_nodelet::PoseResult* result ) {
     cv::Mat image_resize;
-    // RESIZE_WIDTH x RESIZE_HEIGHT(300x300)に画像をリサイズ、画素値を調整
+    // Resize image to RESIZE_WIDTH x RESIZE_HEIGHT(300x300), adjust pixel values
     cv::resize(input_img, image_resize, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT));
-    // Caffeで扱うBlob形式に変換 (実体はcv::Matのラッパークラス)
+    // Converted to Blob format handled by Caffe (entity is a wrapper class for cv::Mat)
     cv::Mat inputBlob = cv::dnn::blobFromImage(image_resize, in_scale_factor_, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT), MEAN_VAL, false);
-    // 入力層に画像を入力
+    // Input image to input layer
     net_.setInput(inputBlob, "data");
-    // フォワードパス(順伝播)の計算(https://iwaki2009.blogspot.com/2017/10/yolo-v2-opencvi-am-investigating-output.html)
+    // Forward path (forward propagation) calculation (https://iwaki2009.blogspot.com/2017/10/yolo-v2-opencvi-am-investigating-output.html)
     cv::Mat detection = net_.forward("detection_out");
     cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
