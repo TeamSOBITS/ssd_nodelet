@@ -83,27 +83,13 @@
 
 ### インストール方法
 
-### ホスト環境の場合
 ```python
 $ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash setup.sh
+$ bash install.sh
 $ cd ~/catkin_ws
 $ catkin_make
 ```
 
-### Docker環境の場合
-- ホスト環境
-```python 
-$ cd ~/〇〇/〇〇/src/ssd_nodelet/
-$ bash setup_rules.sh
-```
-- Docker環境
-```python 
-$ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash setup.sh
-$ cd ~/catkin_ws
-$ catkin_make
-```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 

@@ -82,27 +82,13 @@ The following environment must be in place for normal operation.
 
 ### Installation
 
-### For host environment
 ```python
 $ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash setup.sh
+$ bash install.sh
 $ cd ~/catkin_ws
 $ catkin_make
 ```
 
-### For Docker environment
-- Host Environments
-```python 
-$ cd ~/〇〇/〇〇/src/ssd_nodelet/
-$ bash setup_rules.sh
-```
-- Docker Environments
-```python 
-$ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash setup.sh
-$ cd ~/catkin_ws
-$ catkin_make
-```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
