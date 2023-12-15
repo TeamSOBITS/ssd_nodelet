@@ -17,7 +17,6 @@
   <depend>roscpp</depend>
   <depend>rospy</depend>
   <depend>sensor_msgs</depend>
-  <depend>sobit_common_msg</depend>
   <depend>std_msgs</depend>
   <depend>tf</depend>
   <build_depend>message_generation</build_depend>

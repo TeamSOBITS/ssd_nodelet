@@ -18,7 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  sobit_common_msg
   std_msgs
   message_generation
   tf
@@ -59,7 +58,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs message_runtime tf
+  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs message_runtime tf
   DEPENDS OpenCV
   #  DEPENDS system_lib
 )
