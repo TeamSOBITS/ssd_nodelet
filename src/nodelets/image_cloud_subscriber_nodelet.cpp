@@ -67,9 +67,9 @@ void ssd_nodelet::ImageCloudSubscriber::onInit() {
     sync_ ->registerCallback ( boost::bind( &ImageCloudSubscriber::callbackSenserData, this, _1, _2 ) );
     sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageCloudSubscriber::callbackControl, this);
 
-    pub_object_name_  = nh_.advertise<ssd_nodelet::StringArray> ("objects_name", 1);
-    pub_object_rect_ = nh_.advertise<ssd_nodelet::BoundingBoxes> ("objects_rect", 1);
-    pub_object_pose_ = nh_.advertise<ssd_nodelet::ObjectPoseArray> ("object_pose", 1);
+    pub_object_name_  = nh_.advertise<sobits_msgs::StringArray> ("objects_name", 1);
+    pub_object_rect_ = nh_.advertise<sobits_msgs::BoundingBoxes> ("objects_rect", 1);
+    pub_object_pose_ = nh_.advertise<sobits_msgs::ObjectPoseArray> ("object_pose", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
 }
 
@@ -104,9 +104,9 @@ void ssd_nodelet::ImageCloudSubscriber::callbackSenserData ( const sensor_msgs::
     }
 
     cv::Mat img_raw;
-    ssd_nodelet::StringArrayPtr detect_object_name(new ssd_nodelet::StringArray);
-    ssd_nodelet::BoundingBoxesPtr object_bbox_array(new ssd_nodelet::BoundingBoxes);
-    ssd_nodelet::ObjectPoseArrayPtr object_pose_array(new ssd_nodelet::ObjectPoseArray);
+    sobits_msgs::StringArrayPtr detect_object_name(new sobits_msgs::StringArray);
+    sobits_msgs::BoundingBoxesPtr object_bbox_array(new sobits_msgs::BoundingBoxes);
+    sobits_msgs::ObjectPoseArrayPtr object_pose_array(new sobits_msgs::ObjectPoseArray);
     sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
     try {
         cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );

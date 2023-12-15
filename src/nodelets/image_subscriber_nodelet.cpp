@@ -43,8 +43,8 @@ void ssd_nodelet::ImageSubscriber::onInit() {
     if ( execute_flag ) sub_img_ = nh_.subscribe( sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
     sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageSubscriber::callbackControl, this);
 
-    pub_object_name_  = nh_.advertise<ssd_nodelet::StringArray> ("objects_name", 1);
-    pub_object_rect_ = nh_.advertise<ssd_nodelet::BoundingBoxes> ("objects_rect", 1);
+    pub_object_name_  = nh_.advertise<sobits_msgs::StringArray> ("objects_name", 1);
+    pub_object_rect_ = nh_.advertise<sobits_msgs::BoundingBoxes> ("objects_rect", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
 }
 
@@ -64,8 +64,8 @@ void ssd_nodelet::ImageSubscriber::callbackControl( const std_msgs::Bool& msg ) 
 void ssd_nodelet::ImageSubscriber::callbackImage( const sensor_msgs::ImageConstPtr& img_msg ) {
     // NODELET_INFO("callbackImage");
     cv::Mat img_raw;
-    ssd_nodelet::StringArrayPtr detect_object_name(new ssd_nodelet::StringArray);
-    ssd_nodelet::BoundingBoxesPtr object_bbox_array(new ssd_nodelet::BoundingBoxes);
+    sobits_msgs::StringArrayPtr detect_object_name(new sobits_msgs::StringArray);
+    sobits_msgs::BoundingBoxesPtr object_bbox_array(new sobits_msgs::BoundingBoxes);
     sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
     try {
         cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );

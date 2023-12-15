@@ -128,13 +128,13 @@ $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 |トピック名|型|意味|
 |---|---|---|
 |/ssd_object_detect/detect_result|sensor_msgs/Image|出力画像(検出結果)|
-|/ssd_object_detect/object_name|ssd_nodelet/StringArray|検出物体の名前のリスト|
-|/ssd_object_detect/object_rect|ssd_nodelet/BoundingBoxes|検出物体のバウンディングボックス情報|
+|/ssd_object_detect/object_name|sobits_msgs/StringArray|検出物体の名前のリスト|
+|/ssd_object_detect/object_rect|sobits_msgs/BoundingBoxes|検出物体のバウンディングボックス情報|
 
 #### Only Object Pose
 |トピック名|型|意味|
 |---|---|---|
-|/ssd_object_detect/object_pose|ssd_nodelet/ObjectPoseArray|検出物体の位置|
+|/ssd_object_detect/object_pose|sobits_msgs/ObjectPoseArray|検出物体の位置|
 
 ### Subscriptions:
 |トピック名|型|意味|
