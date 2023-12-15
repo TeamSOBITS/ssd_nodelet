@@ -1,6 +1,6 @@
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
-#include <ssd_nodelet/single_shot_multibox_detector.hpp>
+#include "single_shot_multibox_detector.hpp"
 
 namespace ssd_nodelet {
     class ImageSubscriber : public nodelet::Nodelet {
@@ -43,8 +43,8 @@ void ssd_nodelet::ImageSubscriber::onInit() {
     if ( execute_flag ) sub_img_ = nh_.subscribe( sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
     sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageSubscriber::callbackControl, this);
 
-    pub_object_name_  = nh_.advertise<sobit_common_msg::StringArray> ("object_name", 1);
-    pub_object_rect_ = nh_.advertise<sobit_common_msg::BoundingBoxes> ("object_rect", 1);
+    pub_object_name_  = nh_.advertise<ssd_nodelet::StringArray> ("object_name", 1);
+    pub_object_rect_ = nh_.advertise<ssd_nodelet::BoundingBoxes> ("object_rect", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
 }
 
@@ -64,8 +64,8 @@ void ssd_nodelet::ImageSubscriber::callbackControl( const std_msgs::Bool& msg ) 
 void ssd_nodelet::ImageSubscriber::callbackImage( const sensor_msgs::ImageConstPtr& img_msg ) {
     // NODELET_INFO("callbackImage");
     cv::Mat img_raw;
-    sobit_common_msg::StringArrayPtr detect_object_name(new sobit_common_msg::StringArray);
-    sobit_common_msg::BoundingBoxesPtr object_bbox_array(new sobit_common_msg::BoundingBoxes);
+    ssd_nodelet::StringArrayPtr detect_object_name(new ssd_nodelet::StringArray);
+    ssd_nodelet::BoundingBoxesPtr object_bbox_array(new ssd_nodelet::BoundingBoxes);
     sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
     try {
         cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );

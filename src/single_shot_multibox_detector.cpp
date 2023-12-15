@@ -1,4 +1,4 @@
-#include <ssd_nodelet/single_shot_multibox_detector.hpp>
+#include "single_shot_multibox_detector.hpp"
 
 using namespace ssd_nodelet;
 
@@ -13,8 +13,8 @@ SingleShotMultiboxDetector::SingleShotMultiboxDetector( const std::string& model
 
 int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
                                             const std_msgs::Header& header,
-                                            sobit_common_msg::StringArrayPtr detect_object_name,
-                                            sobit_common_msg::BoundingBoxesPtr object_bbox_array,
+                                            ssd_nodelet::StringArrayPtr detect_object_name,
+                                            ssd_nodelet::BoundingBoxesPtr object_bbox_array,
                                             sensor_msgs::ImagePtr result_img_msg ) {
     // Reference：https://qiita.com/wellflat/items/b32aff49846c30be8c1b
 
@@ -49,7 +49,7 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
         int y_right_top = static_cast<int>(detection_mat.ptr<float>(i)[6] * input_img.rows);
         cv::Rect object_area((int)x_left_bottom , (int)y_left_bottom, (int)(x_right_top-x_left_bottom), (int)(y_right_top-y_left_bottom));
 
-        sobit_common_msg::BoundingBox obj_bbox;
+        ssd_nodelet::BoundingBox obj_bbox;
         obj_bbox.xmin = object_area.x;
         obj_bbox.ymin = object_area.y;
         obj_bbox.xmax = object_area.x + object_area.width;
@@ -122,7 +122,7 @@ int SingleShotMultiboxDetector::conpute(
         int y_right_top = static_cast<int>(detection_mat.ptr<float>(i)[6] * input_img.rows);
         cv::Rect object_area((int)x_left_bottom , (int)y_left_bottom, (int)(x_right_top-x_left_bottom), (int)(y_right_top-y_left_bottom));
 
-        sobit_common_msg::BoundingBox obj_bbox;
+        ssd_nodelet::BoundingBox obj_bbox;
         obj_bbox.xmin = object_area.x;
         obj_bbox.ymin = object_area.y;
         obj_bbox.xmax = object_area.x + object_area.width;
@@ -140,7 +140,7 @@ int SingleShotMultiboxDetector::conpute(
         cv::rectangle(input_img, label_rect, cv::Scalar::all(255), cv::FILLED);
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
-        sobit_common_msg::ObjectPose obj_pose;
+        ssd_nodelet::ObjectPose obj_pose;
         obj_pose.Class = obj_bbox.Class;
         int x_ctr = ( obj_bbox.xmin + obj_bbox.xmax ) / 2;
         int y_ctr = ( obj_bbox.ymin + obj_bbox.ymax ) / 2;
