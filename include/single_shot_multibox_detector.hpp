@@ -25,10 +25,10 @@
 #include <pcl/point_types.h>
 #include <sensor_msgs/PointCloud2.h>
 // for msg pub (original msg)
-#include "ssd_nodelet/StringArray.h"
-#include "ssd_nodelet/BoundingBox.h"
-#include "ssd_nodelet/BoundingBoxes.h"
-#include "ssd_nodelet/ObjectPoseArray.h"
+#include "sobits_msgs/StringArray.h"
+#include "sobits_msgs/BoundingBox.h"
+#include "sobits_msgs/BoundingBoxes.h"
+#include "sobits_msgs/ObjectPoseArray.h"
 
 constexpr size_t RESIZE_WIDTH = 300;
 constexpr size_t RESIZE_HEIGHT = 300;
@@ -40,14 +40,14 @@ typedef pcl::PointCloud<PointT> PointCloud;
 namespace ssd_nodelet {
     class PoseResult {
         public :
-            ssd_nodelet::StringArrayPtr detect_object_name;
-            ssd_nodelet::BoundingBoxesPtr object_bbox_array;
-            ssd_nodelet::ObjectPoseArrayPtr object_pose_array;
+            sobits_msgs::StringArrayPtr detect_object_name;
+            sobits_msgs::BoundingBoxesPtr object_bbox_array;
+            sobits_msgs::ObjectPoseArrayPtr object_pose_array;
             sensor_msgs::ImagePtr result_img_msg;
             PoseResult() {
-                detect_object_name.reset( new ssd_nodelet::StringArray );
-                object_bbox_array.reset( new ssd_nodelet::BoundingBoxes );
-                object_pose_array.reset( new ssd_nodelet::ObjectPoseArray );
+                detect_object_name.reset( new sobits_msgs::StringArray );
+                object_bbox_array.reset( new sobits_msgs::BoundingBoxes );
+                object_pose_array.reset( new sobits_msgs::ObjectPoseArray );
                 result_img_msg.reset( new sensor_msgs::Image );
             }
     };
@@ -80,8 +80,8 @@ namespace ssd_nodelet {
 
             int conpute(    cv::Mat& input_img,
                             const std_msgs::Header& header,
-                            ssd_nodelet::StringArrayPtr detect_object_name,
-                            ssd_nodelet::BoundingBoxesPtr object_bbox_array,
+                            sobits_msgs::StringArrayPtr detect_object_name,
+                            sobits_msgs::BoundingBoxesPtr object_bbox_array,
                             sensor_msgs::ImagePtr result_img_msg );
 
             int conpute(    cv::Mat& input_img,
