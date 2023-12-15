@@ -16,8 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  sobit_common_msg
   std_msgs
+  message_generation
   tf
   pluginlib
   nodelet
@@ -30,13 +30,15 @@ find_package(OpenCV 3.4.2 REQUIRED #4.0.0
   NO_DEFAULT_PATH
 )
 
-
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  BoundingBox.msg
+  BoundingBoxes.msg
+  StringArray.msg
+  ObjectPose.msg
+  ObjectPoseArray.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -53,15 +55,15 @@ find_package(OpenCV 3.4.2 REQUIRED #4.0.0
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   sensor_msgs#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs sensor_msgs std_msgs
+)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs sobit_common_msg std_msgs tf
+  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs  std_msgs messa tf
 #  DEPENDS system_lib
 )
 
