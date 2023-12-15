@@ -3,8 +3,7 @@
 
 #include <ros/ros.h>
 #include <ros/package.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf/transform_broadcaster.h>
 #include <iostream>
 #include <fstream>
 //for image input
@@ -57,7 +56,7 @@ namespace ssd_nodelet {
         private :
             cv::dnn::Net net_;
             std::vector<std::string> class_names_;
-            tf2_ros::TransformBroadcaster br_;
+            tf::TransformBroadcaster br_;
 
             double in_scale_factor_;
             double confidence_threshold_;

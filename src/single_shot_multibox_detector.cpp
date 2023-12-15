@@ -193,24 +193,14 @@ int SingleShotMultiboxDetector::conpute(
         result->object_pose_array->object_poses.emplace_back( obj_pose );
 
         if ( !use_tf ) continue;
-        geometry_msgs::TransformStamped transformStamped;
-        transformStamped.header.stamp = ros::Time::now();
-        transformStamped.header.frame_id = target_frame;
-        transformStamped.child_frame_id = obj_pose.Class + "_" + std::to_string(object_num);
-
-        // Set the translation
-        transformStamped.transform.translation.x = obj_pose.pose.position.x;
-        transformStamped.transform.translation.y = obj_pose.pose.position.y;
-        transformStamped.transform.translation.z = obj_pose.pose.position.z;
-
-        // Set the rotation
-        transformStamped.transform.rotation.x = 0;
-        transformStamped.transform.rotation.y = 0;
-        transformStamped.transform.rotation.z = 0;
-        transformStamped.transform.rotation.w = 1;
-
-        // tf2_ros::TransformBroadcaster
-        br_.sendTransform(transformStamped);
+        br_.sendTransform(
+            tf::StampedTransform(
+                tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(obj_pose.pose.position.x, obj_pose.pose.position.y, obj_pose.pose.position.z)),
+                ros::Time::now(),
+                target_frame,
+                obj_pose.Class + "_" + std::to_string(object_num)
+            )
+        );
     }
     result->object_bbox_array->header = header;
     result->object_pose_array->header = header;
