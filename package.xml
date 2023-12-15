@@ -20,6 +20,8 @@
   <depend>sobit_common_msg</depend>
   <depend>std_msgs</depend>
   <depend>tf</depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 
   <depend>pluginlib</depend>
   <depend>nodelet</depend>
