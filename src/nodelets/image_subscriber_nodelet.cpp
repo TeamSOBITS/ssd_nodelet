@@ -1,6 +1,6 @@
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
-#include "single_shot_multibox_detector.hpp"
+#include "ssd_nodelet/single_shot_multibox_detector.hpp"
 
 namespace ssd_nodelet {
     class ImageSubscriber : public nodelet::Nodelet {
