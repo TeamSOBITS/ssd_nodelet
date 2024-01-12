@@ -1,4 +1,4 @@
-#include "single_shot_multibox_detector.hpp"
+#include "ssd_nodelet/single_shot_multibox_detector.hpp"
 
 using namespace ssd_nodelet;
 
