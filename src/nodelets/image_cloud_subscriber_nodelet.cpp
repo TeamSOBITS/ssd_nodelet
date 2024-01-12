@@ -3,7 +3,7 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
-#include "single_shot_multibox_detector.hpp"
+#include "ssd_nodelet/single_shot_multibox_detector.hpp"
 
 typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloud;
