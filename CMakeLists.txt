@@ -54,7 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs tf sobits_msgs
+  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs tf2_ros tf2 tf2_geometry_msgs sobits_msgs
   DEPENDS OpenCV
   #  DEPENDS system_lib
 )
