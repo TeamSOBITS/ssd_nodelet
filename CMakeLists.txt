@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(ssd_nodelet)
 
-#魔法の1行
 add_compile_options(-std=c++14 -O3 -g -Wall)
 
 find_package(OpenCV REQUIRED)
@@ -19,7 +18,9 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  tf
+  tf2_ros
+  tf2
+  tf2_geometry_msgs
   pluginlib
   nodelet
   sobits_msgs
