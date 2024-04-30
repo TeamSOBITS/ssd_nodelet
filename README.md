@@ -24,7 +24,7 @@
         <li><a href="#インストール方法">インストール方法</a></li>
       </ul>
     </li>
-    <li><a href="#実行・操作方法">実行・操作方法</a></li>
+    <li><a href="#実行・操作方法">実行操作方法</a></li>
     <li><a href="#マイルストーン">マイルストーン</a></li>
     <li><a href="#変更履歴">変更履歴</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
@@ -43,6 +43,7 @@
 * SSD(Single Shot MultiBox Detector)による物体検出
 * Nodelet実装による高速化
 * 50Hzでカメラ画像を入力した場合
+  
     SSD Node
     ```
     average rate: 12.962
@@ -67,7 +68,7 @@
 
 
 <!-- セットアップ -->
-## セットアップ
+## 環境構築
 
 ここで，本レポジトリのセットアップ方法について説明します．
 
