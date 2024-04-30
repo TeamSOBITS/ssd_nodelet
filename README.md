@@ -18,7 +18,7 @@
       <a href="#概要">概要</a>
     </li>
     <li>
-      <a href="#環境構築">環境構築</a>
+      <a href="#環境構築">セットアップ</a>
       <ul>
         <li><a href="#環境条件">環境条件</a></li>
         <li><a href="#インストール方法">インストール方法</a></li>
@@ -32,8 +32,6 @@
     <li><a href="#参考文献">参考文献</a></li>
   </ol>
 </details>
-
-
 
 <!-- レポジトリの概要 -->
 ## 概要
@@ -68,9 +66,11 @@
 
 
 <!-- セットアップ -->
-## 環境構築
+## セットアップ
 
 ここで，本レポジトリのセットアップ方法について説明します．
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### 環境条件
 
@@ -82,6 +82,11 @@
 | ROS | Noetic Ninjemys |
 | Python | 3.0~ |
 
+> [!NOTE]
+> `Ubuntu`や`ROS`のインストール方法に関しては，[SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)に参照してください．
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
 ### インストール方法
 
 ```python
@@ -91,10 +96,7 @@ $ cd ~/catkin_ws
 $ catkin_make
 ```
 
-
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-
-
 
 <!-- 実行・操作方法 -->
 ## 実行・操作方法
@@ -184,7 +186,7 @@ $ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
 
 現時点のバッグや新規機能の依頼を確認するために[Issueページ](https://github.com/TeamSOBITS/ssd_nodelet/issues) をご覧ください．
 
-<p align="right">(<a href="#readme-top">上に</a>)</p>
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
 
