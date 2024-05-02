@@ -26,6 +26,7 @@
     </li>
     <li><a href="#launch-and-usage">Launch and Usage</a></li>
     <li><a href="#milestone">Milestone</a></li>
+    <li><a href="#change-log">Change-Log</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <!-- <li><a href="#license">License</a></li> -->
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -42,6 +43,7 @@
 * Object detection by SSD (Single Shot MultiBox Detector)
 * High speed by Nodelet implementation
 * When camera image is input at 50Hz
+  
     SSD Node
     ```
     average rate: 12.962
@@ -70,6 +72,8 @@
 
 This section describes how to set up this repository.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Prerequisites
 
 The following environment must be in place for normal operation.
@@ -80,19 +84,40 @@ The following environment must be in place for normal operation.
 | ROS | Noetic Ninjemys |
 | Python | 3.0~ |
 
+> [!NOTE]
+> If you need to install `Ubuntu` or `ROS`, please check our [SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6).
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
 ### Installation
 
-```python
-$ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash install.sh
-$ cd ~/catkin_ws
-$ catkin_make
-```
 
+1. Go to the `src` folder of ROS.
+   ```sh
+   $ roscd
+   # Or just use "cd ~/catkin_ws/" and change directory.
+   $ cd src/
+   ```
+2. Clone this repository.
+   ```sh
+   $ git clone https://github.com/TeamSOBITS/ssd_nodelet
+   ```
+3. Navigate into the repository.
+   ```sh
+   $ cd ssd_nodelet/
+   ```
+4. Install the dependent packages.
+   ```sh
+   $ bash install.sh
+   ```
+5. Compile the package.
+   ```sh
+   $ roscd
+   # Or just use "cd ~/catkin_ws/" and change directory.
+   $ catkin_make
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LAUNCH AND USAGE EXAMPLES -->
 ## Launch and Usage
