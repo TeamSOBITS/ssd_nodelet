@@ -80,7 +80,7 @@
 | ------------- | ------------- |
 | Ubuntu | 20.04 (Focal Fossa) |
 | ROS | Noetic Ninjemys |
-| Python | 3.0~ |
+| Python | 3.8 |
 
 > [!NOTE]
 > `Ubuntu`や`ROS`のインストール方法に関しては，[SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)に参照してください．
@@ -89,12 +89,30 @@
 
 ### インストール方法
 
-```python
-$ cd ~/catkin_ws/src/ssd_nodelet/
-$ bash install.sh
-$ cd ~/catkin_ws
-$ catkin_make
-```
+1. ROSの`src`フォルダに移動します．
+   ```sh
+   $ roscd
+   # もしくは，"cd ~/catkin_ws/"へ移動．
+   $ cd src/
+   ```
+2. 本レポジトリをcloneします．
+   ```sh
+   $ git clone https://github.com/TeamSOBITS/ssd_nodelet
+   ```
+3. レポジトリの中へ移動します．
+   ```sh
+   $ cd ssd_nodelet/
+   ```
+4. 依存パッケージをインストールします．
+   ```sh
+   $ bash install.sh
+   ```
+5. パッケージをコンパイルします．
+   ```sh
+   $ roscd
+   # もしくは，"cd ~/catkin_ws/"へ移動．
+   $ catkin_make
+   ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
