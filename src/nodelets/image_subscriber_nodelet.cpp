@@ -1,89 +1,121 @@
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
 #include "ssd_nodelet/single_shot_multibox_detector.hpp"
+#include <sobits_msgs/RunCtrl.h> 
 
 namespace ssd_nodelet {
     class ImageSubscriber : public nodelet::Nodelet {
         private:
+            // Node handles
             ros::NodeHandle nh_;
             ros::NodeHandle pnh_;
+
+            // Publishers for results
             ros::Publisher pub_object_name_;
             ros::Publisher pub_object_rect_;
             ros::Publisher pub_result_img_;
+
+            // Subscribers for sensor data using message_filters
             ros::Subscriber sub_img_;
-            ros::Subscriber sub_ctr_;
+
+            // Service server for controlling the nodelet
+            ros::ServiceServer srv_control_;
+
+            // SSD detector instance
             std::unique_ptr<ssd_nodelet::SingleShotMultiboxDetector> ssd_;
+
+            // CV bridge for image conversion
             cv_bridge::CvImagePtr cv_ptr_;
 
+            // Flags and configuration parameters
             bool pub_result_flag_;
+            bool execute_flag_;
 
         public:
             virtual void onInit();
-            void callbackControl( const std_msgs::Bool& msg );
-            void callbackImage( const sensor_msgs::ImageConstPtr& img_msg );
+            bool callbackControl(sobits_msgs::RunCtrl::Request &req, sobits_msgs::RunCtrl::Response &res);
+            void callbackImage(const sensor_msgs::ImageConstPtr& img_msg);
     };
 }
 
 void ssd_nodelet::ImageSubscriber::onInit() {
+    // Initialize node handles
     nh_ = getNodeHandle();
     pnh_ = getPrivateNodeHandle();
 
+    // Load SSD model paths from parameters
     std::string model_configuration_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_prototxt_name", "voc_object.prototxt");
     std::string model_binary_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_caffemodel_name", "voc_object.caffemodel");
     std::string class_names_file_path = ros::package::getPath("ssd_nodelet") + "/models/" + pnh_.param<std::string>("ssd_class_names_file", "voc_object_names.txt");
 
-    ssd_.reset( new ssd_nodelet::SingleShotMultiboxDetector( model_configuration_path, model_binary_path, class_names_file_path ) );
-    ssd_->setDNNParametr( pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5) );
-    ssd_->setImgShowFlag( pnh_.param<bool>("ssd_img_show_flag", true) );
-    ssd_->specifyDetectionObject( pnh_.param<bool>("object_specified_enabled", false), pnh_.param<std::string>("specified_object_name", "None") );
+    // Initialize SSD detector with parameters
+    ssd_.reset(new ssd_nodelet::SingleShotMultiboxDetector(model_configuration_path, model_binary_path, class_names_file_path));
+    ssd_->setDNNParametr(pnh_.param<double>("ssd_in_scale_factor", 0.007843), pnh_.param<double>("ssd_confidence_threshold", 0.5));
+    ssd_->setImgShowFlag(pnh_.param<bool>("ssd_img_show_flag", true));
+    ssd_->specifyDetectionObject(pnh_.param<bool>("object_specified_enabled", false), pnh_.param<std::string>("specified_object_name", "None"));
 
-    pub_result_flag_ = pnh_.param<bool>( "ssd_pub_result_image", true );
-    bool execute_flag = pnh_.param<bool>("ssd_execute_default", true);
-    std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
-    if ( execute_flag ) sub_img_ = nh_.subscribe( sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
-    sub_ctr_ = nh_.subscribe("detect_ctrl", 10, &ImageSubscriber::callbackControl, this);
+    // Load configuration flags and topics from parameters
+    pub_result_flag_ = pnh_.param<bool>("ssd_pub_result_image", true);
+    execute_flag_ = pnh_.param<bool>("ssd_execute_default", true);
+    std::string sub_image_topic_name = pnh_.param<std::string>("ssd_image_topic_name", "/camera/rgb/image_raw");
+    if (execute_flag_) {
+        sub_img_ = nh_.subscribe(sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
+    }
 
-    pub_object_name_  = nh_.advertise<sobits_msgs::StringArray> ("object_name", 1);
-    pub_object_rect_ = nh_.advertise<sobits_msgs::BoundingBoxes> ("object_rect", 1);
+    // Advertise service server
+    srv_control_ = nh_.advertiseService("detect_ctrl", &ImageSubscriber::callbackControl, this);
+
+    // Initialize publishers for the detection results
+    pub_object_name_ = nh_.advertise<sobits_msgs::StringArray>("object_name", 1);
+    pub_object_rect_ = nh_.advertise<sobits_msgs::BoundingBoxes>("object_rect", 1);
     pub_result_img_ = nh_.advertise<sensor_msgs::Image>("detect_result", 1);
 }
 
-void ssd_nodelet::ImageSubscriber::callbackControl( const std_msgs::Bool& msg ) {
-    // NODELET_INFO("callbackControl");
-    std::string sub_image_topic_name = pnh_.param<std::string>( "ssd_image_topic_name", "/camera/rgb/image_raw" );
-    if ( msg.data ) {
+bool ssd_nodelet::ImageSubscriber::callbackControl(sobits_msgs::RunCtrl::Request &req, sobits_msgs::RunCtrl::Response &res) {
+    // Service callback to control the nodelet execution
+    execute_flag_ = req.request;
+    res.response = execute_flag_;
+    std::string sub_image_topic_name = pnh_.param<std::string>("ssd_image_topic_name", "/camera/rgb/image_raw");
+    
+    if (execute_flag_) {
         std::cout << "[" << ros::this_node::getName() << "] Turn on the sensor subscriber\n" << std::endl;
-        sub_img_ = nh_.subscribe(sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this); //オン（再定義）
+        sub_img_ = nh_.subscribe(sub_image_topic_name, 10, &ImageSubscriber::callbackImage, this);
     } else {
         std::cout << "[" << ros::this_node::getName() << "] Turn off the sensor subscriber\n" << std::endl;
-        sub_img_.shutdown();//オフ
+        sub_img_.shutdown();
     }
-    return;
+    return true;
 }
 
-void ssd_nodelet::ImageSubscriber::callbackImage( const sensor_msgs::ImageConstPtr& img_msg ) {
-    // NODELET_INFO("callbackImage");
+void ssd_nodelet::ImageSubscriber::callbackImage(const sensor_msgs::ImageConstPtr& img_msg) {
+    // Callback for image data
+    if (!execute_flag_) return;
+
     cv::Mat img_raw;
     sobits_msgs::StringArrayPtr detect_object_name(new sobits_msgs::StringArray);
     sobits_msgs::BoundingBoxesPtr object_bbox_array(new sobits_msgs::BoundingBoxes);
     sensor_msgs::ImagePtr result_img_msg(new sensor_msgs::Image);
+
     try {
-        cv_ptr_ = cv_bridge::toCvCopy( img_msg, sensor_msgs::image_encodings::BGR8 );
+        // Convert ROS image message to OpenCV image
+        cv_ptr_ = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGR8);
         img_raw = cv_ptr_->image.clone();
-    } catch ( cv_bridge::Exception& e ) {
+    } catch (cv_bridge::Exception& e) {
         NODELET_ERROR("cv_bridge exception: %s", e.what());
         return;
     }
-    if (img_raw.empty() == true) {
+    if (img_raw.empty()) {
         NODELET_ERROR("SSD_Object_Detection -> input_image error");
         return;
     }
 
-    ssd_->conpute( img_raw, img_msg->header, detect_object_name, object_bbox_array, result_img_msg );
+    // Run the SSD detector
+    ssd_->conpute(img_raw, img_msg->header, detect_object_name, object_bbox_array, result_img_msg);
+
+    // Publish the results
     pub_object_name_.publish(detect_object_name);
     pub_object_rect_.publish(object_bbox_array);
-    if ( pub_result_flag_ ) pub_result_img_.publish( result_img_msg );
-    return;
+    if (pub_result_flag_) pub_result_img_.publish(result_img_msg);
 }
 
 PLUGINLIB_EXPORT_CLASS(ssd_nodelet::ImageSubscriber, nodelet::Nodelet);
