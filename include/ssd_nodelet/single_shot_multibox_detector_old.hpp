@@ -114,8 +114,8 @@ inline int ssd_nodelet::SingleShotMultiboxDetector::readFiles( const std::string
 }
 
 inline void ssd_nodelet::SingleShotMultiboxDetector::setDNNParametr( const double in_scale_factor, const double confidence_threshold ) {
-    in_scale_factor_ = in_scale_factor;
-    confidence_threshold_ = confidence_threshold;
+    in_scale_factor_ = in_scale_factor;  // 0.007843
+    confidence_threshold_ = confidence_threshold; // 0.5
 }
 
 inline void ssd_nodelet::SingleShotMultiboxDetector::setImgShowFlag( const bool img_show_flag ) {
@@ -131,8 +131,8 @@ inline void ssd_nodelet::SingleShotMultiboxDetector::specifyDetectionObject( con
     object_specified_enabled_ = false;
     for ( const auto& name :class_names_ ) {
         if ( specified_object_name == name ) {
-            specified_object_name_ = specified_object_name;
-            object_specified_enabled_ = object_specified_enabled;
+            specified_object_name_ = specified_object_name;  // "None"
+            object_specified_enabled_ = object_specified_enabled; // false
             ROS_INFO_STREAM("SSD_Object_Detection -> specified_object_name = " <<  specified_object_name.c_str() );
         }
     }

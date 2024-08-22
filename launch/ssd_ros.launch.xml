@@ -1,0 +1,56 @@
+<launch>
+    <arg name="img_show_flag"                    default="true" />
+    <arg name="execute_default"                  default="true" />
+
+    <arg name="image_topic_name"                 default="/camera/camera/color/image_raw" />
+    <arg name="point_cloud_topic_name"           default="/camera/camera/depth/color/points" />
+
+    <arg name="in_scale_factor"                  default="0.007843" />
+    <arg name="confidence_threshold"             default="0.5" />
+    <arg name="ssd_prototxt_name"                default="$(find-pkg-share ssd_ros)/models/voc_object.prototxt" />
+    <arg name="ssd_caffemodel_name"              default="$(find-pkg-share ssd_ros)/models/voc_object.caffemodel" />
+    <arg name="ssd_class_names_file"             default="$(find-pkg-share ssd_ros)/models/voc_object_names.txt" />
+    <arg name="object_specified_enabled"         default="true" />
+    <arg name="specified_object_name"            default="person" />
+
+    <!-- <arg name="in_scale_factor"                  default="1.00" />
+    <arg name="confidence_threshold"             default="0.5" />
+    <arg name="ssd_prototxt_name"                default="$(find-pkg-share ssd_ros)/models/face.prototxt" />
+    <arg name="ssd_caffemodel_name"              default="$(find-pkg-share ssd_ros)/models/face.caffemodel" />
+    <arg name="ssd_class_names_file"             default="$(find-pkg-share ssd_ros)/models/face_names.txt" />
+    <arg name="object_specified_enabled"         default="true" />
+    <arg name="specified_object_name"            default="face" /> -->
+
+    <node pkg="ssd_ros" exec="single_shot_multibox_detector" name="single_shot_multibox_detector" >
+        <param name="image_show_flag"            value="$(var img_show_flag)"/>
+        <param name="execute_default"            value="$(var execute_default)"/>
+
+        <param name="image_topic_name"           value="$(var image_topic_name)"/>
+
+        <param name="in_scale_factor"            value="$(var in_scale_factor)"/>
+        <param name="confidence_threshold"       value="$(var confidence_threshold)"/>
+
+        <param name="ssd_prototxt_name"          value="$(var ssd_prototxt_name)"/>
+        <param name="ssd_caffemodel_name"        value="$(var ssd_caffemodel_name)"/>
+        <param name="ssd_class_names_file"       value="$(var ssd_class_names_file)"/>
+
+        <param name="object_specified_enabled"   value="$(var object_specified_enabled)"/>
+        <param name="specified_object_name"      value="$(var specified_object_name)"/>
+    </node>
+
+    <!-- all point cloud in bbox to TF(bbox_to_tf.launch.xml) or one point bbox to TF(bbox_to_tf_fast_shot.launch.xml) -->
+    <!-- <include file="$(find-pkg-share bbox_to_tf)/launch/bbox_to_tf.launch.xml"> -->
+    <include file="$(find-pkg-share bbox_to_tf)/launch/bbox_to_tf_fast_shot.launch.xml">
+        <arg name="node_name"                 value="ssd_ros_bbox_to_tf"/>
+        <arg name="base_frame_name"           value="base_footprint"/>
+        <arg name="bbox_topic_name"           value="/ssd_ros/objects_rect"/>
+        <arg name="cloud_topic_name"          value="$(var point_cloud_topic_name)"/>
+        <arg name="img_topic_name"            value="$(var image_topic_name)"/>
+        <arg name="execute_default"           value="true"/>
+        <arg name="cluster_tolerance"         value="0.008"/>
+        <arg name="min_clusterSize"           value="10"/>
+        <arg name="max_lusterSize"            value="2000000"/>
+        <arg name="noise_point_cloud_range"   value="0.03"/>
+        <arg name="rviz"                      value="true"/>
+    </include>
+</launch>
