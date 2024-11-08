@@ -53,12 +53,12 @@
         min: 0.015s max: 0.027s std dev: 0.00243s window: 49
     ```
 
-<div align="center">
+<!-- <div align="center">
     <img src="doc/ssd_nodelet.png" width="1080">
 </div> 
 <div align="center">
     <img src="doc/ssd_nodelet_pose.png" width="1080"> 
-</div> 
+</div>  -->
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
