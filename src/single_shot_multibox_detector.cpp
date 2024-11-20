@@ -16,9 +16,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "sobits_msgs/msg/bounding_boxes.hpp"
-#include "sobits_msgs/msg/bounding_box.hpp"
-#include "sobits_msgs/srv/run_ctrl.hpp"
+#include "sobits_interfaces/msg/bounding_boxes.hpp"
+#include "sobits_interfaces/msg/bounding_box.hpp"
+#include "sobits_interfaces/srv/run_ctrl.hpp"
 
 constexpr size_t RESIZE_WIDTH = 300;
 constexpr size_t RESIZE_HEIGHT = 300;
@@ -28,9 +28,9 @@ class SSDRos {
     private:
         rclcpp::Node::SharedPtr nd_;
         rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_image_;
-        rclcpp::Publisher<sobits_msgs::msg::BoundingBoxes>::SharedPtr pub_bbox_;
+        rclcpp::Publisher<sobits_interfaces::msg::BoundingBoxes>::SharedPtr pub_bbox_;
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_image_;
-        rclcpp::Service<sobits_msgs::srv::RunCtrl>::SharedPtr run_ctr_srv_;
+        rclcpp::Service<sobits_interfaces::srv::RunCtrl>::SharedPtr run_ctr_srv_;
         std::string topic_name;
         std::string model_configuration_path;
         std::string model_binary_path;
@@ -67,7 +67,7 @@ class SSDRos {
             cv::Mat detection = net_.forward("detection_out");
             cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
-            sobits_msgs::msg::BoundingBoxes bboxes;
+            sobits_interfaces::msg::BoundingBoxes bboxes;
             bboxes.header = img_msg->header;
             for (int i = 0; i < detection_mat.rows; ++i ) {
                 float confidence = detection_mat.ptr<float>(i)[2];
@@ -89,7 +89,7 @@ class SSDRos {
                 cv::rectangle(cv_img, label_rect, cv::Scalar::all(255), cv::FILLED);
                 cv::putText(cv_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
-                sobits_msgs::msg::BoundingBox bbox;
+                sobits_interfaces::msg::BoundingBox bbox;
                 // x_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[3] * image_resize.cols);
                 // y_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[4] * image_resize.rows);
                 // x_right_top = static_cast<int>(detection_mat.ptr<float>(i)[5] * image_resize.cols);
@@ -115,7 +115,7 @@ class SSDRos {
             pub_image_->publish(*pub_image_data);
             pub_bbox_->publish(bboxes);
         }
-        void callback_RunCtr(const std::shared_ptr<sobits_msgs::srv::RunCtrl::Request> req, std::shared_ptr<sobits_msgs::srv::RunCtrl::Response> res) {
+        void callback_RunCtr(const std::shared_ptr<sobits_interfaces::srv::RunCtrl::Request> req, std::shared_ptr<sobits_interfaces::srv::RunCtrl::Response> res) {
             execute_flag_ = req->request;
             res->response = true;
         }
@@ -146,9 +146,9 @@ class SSDRos {
             net_ = cv::dnn::readNetFromCaffe( model_configuration_path, model_binary_path );
 
             pub_image_ = nd_->create_publisher<sensor_msgs::msg::Image>( "/ssd_ros/detect_result", 1);
-            pub_bbox_ = nd_->create_publisher<sobits_msgs::msg::BoundingBoxes>( "/ssd_ros/objects_rect", 1);
+            pub_bbox_ = nd_->create_publisher<sobits_interfaces::msg::BoundingBoxes>( "/ssd_ros/objects_rect", 1);
 
-            run_ctr_srv_ = nd_->create_service<sobits_msgs::srv::RunCtrl>("/ssd_ros/run_ctr", std::bind(&SSDRos::callback_RunCtr, this, std::placeholders::_1, std::placeholders::_2));
+            run_ctr_srv_ = nd_->create_service<sobits_interfaces::srv::RunCtrl>("/ssd_ros/run_ctr", std::bind(&SSDRos::callback_RunCtr, this, std::placeholders::_1, std::placeholders::_2));
             sub_image_ = nd_->create_subscription<sensor_msgs::msg::Image>(topic_name, 5, std::bind(&SSDRos::callback_image, this, std::placeholders::_1));
         }
 };

@@ -15,7 +15,7 @@
 #include <std_msgs/msg/header.hpp>
 
 // #include "human_feature_detection/point_cloud_processor.hpp"
-// #include "sobits_msgs/msg/feature3d.hpp"
+// #include "sobits_interfaces/msg/feature3d.hpp"
 
 constexpr size_t RESIZE_WIDTH = 300;
 constexpr size_t RESIZE_HEIGHT = 300;

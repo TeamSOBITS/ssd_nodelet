@@ -6,7 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(OpenCV 4.9.0 REQUIRED PATHS "/opt/opencv/opencv_4.9.0/")
+find_package(OpenCV 4.5.4 REQUIRED PATHS "/opt/opencv/opencv_4.5.4/")
 # find_package(OpenCV 4 REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
@@ -21,7 +21,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
-find_package(sobits_msgs REQUIRED)
+find_package(sobits_interfaces REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
@@ -33,9 +33,9 @@ find_package(rosidl_default_generators REQUIRED)
 ############################################
 include_directories(include)
 add_executable(single_shot_multibox_detector src/single_shot_multibox_detector.cpp)
-ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_msgs rosidl_default_runtime)
+ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime)
 # add_executable(bbox_to_tf_fast_shot src/bbox_to_tf_fast_shot.cpp)
-# ament_target_dependencies(bbox_to_tf_fast_shot rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_msgs rosidl_default_runtime)
+# ament_target_dependencies(bbox_to_tf_fast_shot rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime)
 
 install(TARGETS
   single_shot_multibox_detector
