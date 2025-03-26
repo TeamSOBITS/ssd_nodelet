@@ -33,7 +33,6 @@ class SSDRos {
         rclcpp::Node::SharedPtr nd_;
         rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_image_;
         rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr pub_bbox_;
-        // rclcpp::Publisher<sobits_interfaces::msg::BoundingBoxes>::SharedPtr pub_bbox_; /**/
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_image_;
         rclcpp::Service<sobits_interfaces::srv::RunCtrl>::SharedPtr run_ctr_srv_;
         std::string topic_name;
@@ -71,8 +70,6 @@ class SSDRos {
             net_.setInput(inputBlob, "data");
             cv::Mat detection = net_.forward("detection_out");
             cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
-
-//==============================================================================================================================================================
 
             vision_msgs::msg::Detection2DArray detection_array_msg;
             detection_array_msg.header = img_msg->header;
@@ -114,21 +111,19 @@ class SSDRos {
                 ohwp.hypothesis.class_id = class_names_[(size_t)(detection_mat.ptr<float>(i)[1])];
                 // 信頼度
                 ohwp.hypothesis.score = confidence;
+                // // 位置情報
+                // ohwp.pose.pose.position.x = 0.0;
+                // ohwp.pose.pose.position.y = 0.0;
+                // ohwp.pose.pose.position.z =  0.0;
+                // // クォータニオン
+                // ohwp.pose.pose.orientation.x = 0.0;
+                // ohwp.pose.pose.orientation.y = 0.0;
+                // ohwp.pose.pose.orientation.z = 0.0;
+                // ohwp.pose.pose.orientation.w = 1.0;
+                // ohwp.pose.covariance.fill(0.0);
                 // results配列に追加
                 content.results.push_back(ohwp);
 
-                // vision_msgs::msg::PoseWithCovariance pwc;
-
-                // pwc.pose.pose.position.x = 0.0;
-                // pwc.pose.pose.position.y = 0.0;
-                // pwc.pose.pose.position.z =  0.0;
-
-                // pwc.pose.pose.orientation.x = 0.0;
-                // pwc.pose.pose.orientation.y = 0.0;
-                // pwc.pose.pose.orientation.z = 0.0; 
-                // pwc.covariance = 0.0;
-
-                
                 // BoundingBox2D型の設定
                 vision_msgs::msg::BoundingBox2D bbox;
                 // 中心座標
@@ -187,7 +182,6 @@ class SSDRos {
 
             pub_image_ = nd_->create_publisher<sensor_msgs::msg::Image>( "/ssd_ros/detect_result", 1);
             pub_bbox_ = nd_->create_publisher<vision_msgs::msg::Detection2DArray>( "/ssd_ros/objects_rect", 1);
-            // pub_bbox_ = nd_->create_publisher<sobits_interfaces::msg::BoundingBoxes>( "/ssd_ros/objects_rect", 1);
 
             run_ctr_srv_ = nd_->create_service<sobits_interfaces::srv::RunCtrl>("/ssd_ros/run_ctr", std::bind(&SSDRos::callback_RunCtr, this, std::placeholders::_1, std::placeholders::_2));
             sub_image_ = nd_->create_subscription<sensor_msgs::msg::Image>(topic_name, 5, std::bind(&SSDRos::callback_image, this, std::placeholders::_1));
