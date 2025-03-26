@@ -16,8 +16,12 @@
 #include <iostream>
 #include <fstream>
 
-#include "sobits_interfaces/msg/bounding_boxes.hpp"
-#include "sobits_interfaces/msg/bounding_box.hpp"
+#include "vision_msgs/msg/detection2_d_array.hpp"
+#include "vision_msgs/msg/detection2_d.hpp"
+#include "vision_msgs/msg/bounding_box2_d.hpp"
+#include "vision_msgs/msg/object_hypothesis_with_pose.hpp"
+#include "geometry_msgs/msg/pose_with_covariance.hpp"
+
 #include "sobits_interfaces/srv/run_ctrl.hpp"
 
 constexpr size_t RESIZE_WIDTH = 300;
@@ -28,7 +32,8 @@ class SSDRos {
     private:
         rclcpp::Node::SharedPtr nd_;
         rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_image_;
-        rclcpp::Publisher<sobits_interfaces::msg::BoundingBoxes>::SharedPtr pub_bbox_;
+        rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr pub_bbox_;
+        // rclcpp::Publisher<sobits_interfaces::msg::BoundingBoxes>::SharedPtr pub_bbox_; /**/
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_image_;
         rclcpp::Service<sobits_interfaces::srv::RunCtrl>::SharedPtr run_ctr_srv_;
         std::string topic_name;
@@ -67,20 +72,30 @@ class SSDRos {
             cv::Mat detection = net_.forward("detection_out");
             cv::Mat detection_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
-            sobits_interfaces::msg::BoundingBoxes bboxes;
-            bboxes.header = img_msg->header;
+//==============================================================================================================================================================
+
+            vision_msgs::msg::Detection2DArray detection_array_msg;
+            detection_array_msg.header = img_msg->header;
             for (int i = 0; i < detection_mat.rows; ++i ) {
                 float confidence = detection_mat.ptr<float>(i)[2];
                 if ( confidence <= confidence_threshold_ ) continue;
                 if ( class_names_.size() <= (size_t)(detection_mat.ptr<float>(i)[1]) ) continue;
                 if ( object_specified_enabled_ && (class_names_[(size_t)(detection_mat.ptr<float>(i)[1])] != specified_object_name_) ) continue;
 
-                int x_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[3] * cv_img.cols);
-                int y_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[4] * cv_img.rows);
-                int x_right_top = static_cast<int>(detection_mat.ptr<float>(i)[5] * cv_img.cols);
-                int y_right_top = static_cast<int>(detection_mat.ptr<float>(i)[6] * cv_img.rows);
-                cv::Rect object_area((int)x_left_bottom , (int)y_left_bottom, (int)(x_right_top-x_left_bottom), (int)(y_right_top-y_left_bottom));
+                float x_left_bottom = static_cast<float>(detection_mat.ptr<float>(i)[3] * cv_img.cols);
+                float y_left_bottom = static_cast<float>(detection_mat.ptr<float>(i)[4] * cv_img.rows);
+                float x_right_top = static_cast<float>(detection_mat.ptr<float>(i)[5] * cv_img.cols);
+                float y_right_top = static_cast<float>(detection_mat.ptr<float>(i)[6] * cv_img.rows);
 
+                // 幅
+                float width = static_cast<float>(x_right_top - x_left_bottom);
+                float hight = static_cast<float>(y_right_top - y_left_bottom);
+                // 中点
+                float x_half = static_cast<float>((x_right_top - x_left_bottom)/2);
+                float y_half = static_cast<float>((y_right_top - y_left_bottom)/2);
+
+                // 描画
+                cv::Rect object_area((int)x_left_bottom , (int)y_left_bottom, (int)(x_right_top-x_left_bottom), (int)(y_right_top-y_left_bottom));
                 cv::rectangle(cv_img, object_area, cv::Scalar(0, 255, 0) ,2);
                 cv::String label = class_names_[(size_t)(detection_mat.ptr<float>(i)[1])] + ": " + std::to_string(confidence);
                 int baseLine = 0;
@@ -89,22 +104,47 @@ class SSDRos {
                 cv::rectangle(cv_img, label_rect, cv::Scalar::all(255), cv::FILLED);
                 cv::putText(cv_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
-                sobits_interfaces::msg::BoundingBox bbox;
-                // x_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[3] * image_resize.cols);
-                // y_left_bottom = static_cast<int>(detection_mat.ptr<float>(i)[4] * image_resize.rows);
-                // x_right_top = static_cast<int>(detection_mat.ptr<float>(i)[5] * image_resize.cols);
-                // y_right_top = static_cast<int>(detection_mat.ptr<float>(i)[6] * image_resize.rows);
-                // x_left_bottom = static_cast<int>(x_left_bottom * (cv_img.cols / static_cast<float>(RESIZE_WIDTH)));
-                // y_left_bottom = static_cast<int>(y_left_bottom * (cv_img.rows / static_cast<float>(RESIZE_HEIGHT)));
-                // x_right_top = static_cast<int>(x_right_top * (cv_img.cols / static_cast<float>(RESIZE_WIDTH)));
-                // y_right_top = static_cast<int>(y_right_top * (cv_img.rows / static_cast<float>(RESIZE_HEIGHT)));
-                bbox.xmin = x_left_bottom;
-                bbox.ymin = y_left_bottom;
-                bbox.xmax = x_right_top;
-                bbox.ymax = y_right_top;
-                bbox.probability = confidence;
-                bbox.class_name = class_names_[(size_t)(detection_mat.ptr<float>(i)[1])];
-                bboxes.bounding_boxes.push_back(bbox);
+                // Detection2D型の設定
+                vision_msgs::msg::Detection2D content;
+                // ヘッダーの追加
+                content.header = img_msg->header;
+
+                vision_msgs::msg::ObjectHypothesisWithPose ohwp;
+                // オブジェクト名
+                ohwp.hypothesis.class_id = class_names_[(size_t)(detection_mat.ptr<float>(i)[1])];
+                // 信頼度
+                ohwp.hypothesis.score = confidence;
+                // results配列に追加
+                content.results.push_back(ohwp);
+
+                // vision_msgs::msg::PoseWithCovariance pwc;
+
+                // pwc.pose.pose.position.x = 0.0;
+                // pwc.pose.pose.position.y = 0.0;
+                // pwc.pose.pose.position.z =  0.0;
+
+                // pwc.pose.pose.orientation.x = 0.0;
+                // pwc.pose.pose.orientation.y = 0.0;
+                // pwc.pose.pose.orientation.z = 0.0; 
+                // pwc.covariance = 0.0;
+
+                
+                // BoundingBox2D型の設定
+                vision_msgs::msg::BoundingBox2D bbox;
+                // 中心座標
+                bbox.center.position.x = x_half;
+                bbox.center.position.y = y_half;
+                // 回転
+                bbox.center.theta = 0.0;
+                // 幅・高さ
+                bbox.size_x = width;
+                bbox.size_y = hight;
+                // Detection2D型のbboxにバウンディグボックスの情報を格納
+                content.bbox = bbox;
+
+                content.id = class_names_[(size_t)(detection_mat.ptr<float>(i)[1])];
+
+                detection_array_msg.detections.push_back(content);
             }
 
             if (img_show_flag_) {
@@ -113,7 +153,7 @@ class SSDRos {
             }
             sensor_msgs::msg::Image::SharedPtr pub_image_data = cv_bridge::CvImage(img_msg->header, "bgr8", cv_img).toImageMsg();
             pub_image_->publish(*pub_image_data);
-            pub_bbox_->publish(bboxes);
+            pub_bbox_->publish(detection_array_msg);
         }
         void callback_RunCtr(const std::shared_ptr<sobits_interfaces::srv::RunCtrl::Request> req, std::shared_ptr<sobits_interfaces::srv::RunCtrl::Response> res) {
             execute_flag_ = req->request;
@@ -146,7 +186,8 @@ class SSDRos {
             net_ = cv::dnn::readNetFromCaffe( model_configuration_path, model_binary_path );
 
             pub_image_ = nd_->create_publisher<sensor_msgs::msg::Image>( "/ssd_ros/detect_result", 1);
-            pub_bbox_ = nd_->create_publisher<sobits_interfaces::msg::BoundingBoxes>( "/ssd_ros/objects_rect", 1);
+            pub_bbox_ = nd_->create_publisher<vision_msgs::msg::Detection2DArray>( "/ssd_ros/objects_rect", 1);
+            // pub_bbox_ = nd_->create_publisher<sobits_interfaces::msg::BoundingBoxes>( "/ssd_ros/objects_rect", 1);
 
             run_ctr_srv_ = nd_->create_service<sobits_interfaces::srv::RunCtrl>("/ssd_ros/run_ctr", std::bind(&SSDRos::callback_RunCtr, this, std::placeholders::_1, std::placeholders::_2));
             sub_image_ = nd_->create_subscription<sensor_msgs::msg::Image>(topic_name, 5, std::bind(&SSDRos::callback_image, this, std::placeholders::_1));
@@ -162,3 +203,15 @@ int main(int argc, char **argv) {
     rclcpp::shutdown();
     return 0;
 }
+
+// 実行時に以下のエラーが出る場合
+    // [single_shot_multibox_detector-1] (single_shot_multibox_detector:264666): Gtk-WARNING **: 22:38:02.062: Failed to parse /home/tarotsukada/.config/gtk-3.0/settings.ini: Key file does not have group “Settings”
+
+// 編集するファイル
+    // ~/.config/gtk-3.0/settings.ini
+
+// 追記内容
+    // [Settings]
+    // gtk-theme-name = Adwaita
+    // gtk-icon-theme-name = Adwaita
+    // gtk-font-name = Sans 10
