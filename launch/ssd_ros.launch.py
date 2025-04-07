@@ -16,9 +16,9 @@ def generate_launch_description():
     voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
 
     # 顔認識用
-    # face_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face.prototxt')
-    # face_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face.caffemodel')
-    # face_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face_names.txt')
+    # voc_object_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face.prototxt')
+    # voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face.caffemodel')
+    # voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face_names.txt')
 
     img_show_flag = LaunchConfiguration("img_show_flag")
     img_show_flag_cmd = DeclareLaunchArgument(
@@ -38,8 +38,9 @@ def generate_launch_description():
     image_topic_name_cmd = DeclareLaunchArgument(
         "image_topic_name",
         description="ROS Topic Name of sensor_msgs/msg/Image message",
-        # default_value="/camera/camera/color/image_raw",    ## realsense
-        default_value="/rgb/image_raw",                      ## azure_kinect
+        # default_value="/camera/camera/color/image_raw",      ## realsense
+        # default_value="/rgb/image_raw",                      ## azure_kinect
+        default_value="/camera/color/image_raw",             ## orbbec_series
     )
 
     point_cloud_topic_name = LaunchConfiguration("point_cloud_topic_name")
@@ -47,7 +48,8 @@ def generate_launch_description():
         "point_cloud_topic_name",
         description="ROS Topic Name of sensor_msgs/msg/PointCloud2 message",
         # default_value="/camera/camera/depth/color/points",   ## realsense
-        default_value="/points2",                            ## azure_kinect
+        # default_value="/points2",                            ## azure_kinect
+        default_value="/camera/depth_registered/points",     ## orbbec_series
     )
 
     in_scale_factor = LaunchConfiguration("in_scale_factor")
@@ -68,43 +70,50 @@ def generate_launch_description():
     ssd_prototxt_name = LaunchConfiguration("ssd_prototxt_name")
     ssd_prototxt_name_cmd = DeclareLaunchArgument(
         "ssd_prototxt_name",
-        default_value=voc_object_prototxt_path,
         description="ニューラルネットの構造を記述したtxt",
+        default_value=voc_object_prototxt_path,
     )
 
     ssd_caffemodel_name = LaunchConfiguration("ssd_caffemodel_name")
     ssd_caffemodel_name_cmd = DeclareLaunchArgument(
         "ssd_caffemodel_name",
-        default_value=voc_object_caffemodel_path,
         description="学習済みモデル",
+        default_value=voc_object_caffemodel_path,
     )
 
     ssd_class_names_file = LaunchConfiguration("ssd_class_names_file")
     ssd_class_names_file_cmd = DeclareLaunchArgument(
         "ssd_class_names_file",
-        default_value=voc_object_names_path,
         description="物体名リスト",
+        default_value=voc_object_names_path,
     )
 
     object_specified_enabled = LaunchConfiguration("object_specified_enabled")
     object_specified_enabled_cmd = DeclareLaunchArgument(
         "object_specified_enabled",
-        default_value='true',
         description="特定の物体検出フラグ",
+        default_value='true',
     )
 
     specified_object_name = LaunchConfiguration("specified_object_name")
     specified_object_name_cmd = DeclareLaunchArgument(
         "specified_object_name",
+        description="特定する場合に検出する物体名",
         default_value='person',
-        description="検出する物体名",
+    )
+
+    namespace = LaunchConfiguration("namespace")
+    namespace_cmd = DeclareLaunchArgument(
+        "namespace",
+        description="Namespace for the nodes",
+        default_value="ssd_ros",
     )
 
     ssd_ros_node_cmd = Node(
         package="ssd_ros",
         executable="single_shot_multibox_detector",
         name="ssd_ros",
-        # namespace=namespace,
+        namespace=namespace,
         parameters=[
             {
                 "img_show_flag": img_show_flag,
@@ -118,7 +127,6 @@ def generate_launch_description():
                 "object_specified_enabled": object_specified_enabled,
                 "specified_object_name": specified_object_name,
             },
-            # class_list
         ],
         output="screen"
     )
@@ -137,12 +145,13 @@ def generate_launch_description():
             )
         ),
         launch_arguments={
-            # "namespace": namespace,
-            "base_frame_name": "camera_base",
+            "namespace": namespace,
+            "base_frame_name": "base_footprint",
             "bbox_topic_name": "/ssd_ros/objects_rect",
             "cloud_topic_name": point_cloud_topic_name,
             "img_topic_name": image_topic_name,
             "execute_default": execute_default,
+            "fast_shot": "true",
         }.items(),
         condition=IfCondition(use_3d),  # use_3dがTrueのときのみ実行
     )
@@ -160,6 +169,7 @@ def generate_launch_description():
             ssd_class_names_file_cmd,
             object_specified_enabled_cmd,
             specified_object_name_cmd,
+            namespace_cmd,
             ssd_ros_node_cmd,
             use_3d_cmd,
             bbox_to_3d_cmd,
