@@ -8,10 +8,10 @@ DIR=$(pwd)
 
 # Clone required packages
 cd ..
-git clone -b feature/humble-devel https://github.com/TeamSOBITS/sobits_msgs.git
-git clone -b feature/humble-devel https://github.com/TeamSOBITS/bbox_to_tf.git
+git clone -b ${ROS_DISTRO}-devel https://github.com/TeamSOBITS/bbox_to_tf.git
 cd bbox_to_tf/
 bash install.sh
+cd ..
 
 # Install Camera Packages
 sudo apt-get install -y \

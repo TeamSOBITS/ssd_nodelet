@@ -21,9 +21,10 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
-find_package(sobits_interfaces REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(vision_msgs REQUIRED)
 
 
 #--- for C++
@@ -33,9 +34,9 @@ find_package(rosidl_default_generators REQUIRED)
 ############################################
 include_directories(include)
 add_executable(single_shot_multibox_detector src/single_shot_multibox_detector.cpp)
-ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime)
+ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros std_srvs rosidl_default_runtime vision_msgs)
 # add_executable(bbox_to_tf_fast_shot src/bbox_to_tf_fast_shot.cpp)
-# ament_target_dependencies(bbox_to_tf_fast_shot rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime)
+# ament_target_dependencies(bbox_to_tf_fast_shot rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime vision_msgs)
 
 install(TARGETS
   single_shot_multibox_detector
@@ -47,6 +48,7 @@ install(TARGETS
 install(DIRECTORY launch/
         DESTINATION share/${PROJECT_NAME}/launch)
 #--- end Launch
+
 
 #-- for Models
 install(DIRECTORY models/
