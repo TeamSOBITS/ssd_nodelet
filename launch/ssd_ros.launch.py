@@ -20,9 +20,9 @@ def generate_launch_description():
     # voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face.caffemodel')
     # voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'face_names.txt')
 
-    img_show_flag = LaunchConfiguration("img_show_flag")
-    img_show_flag_cmd = DeclareLaunchArgument(
-        "img_show_flag",
+    image_show_flag = LaunchConfiguration("image_show_flag")
+    image_show_flag_cmd = DeclareLaunchArgument(
+        "image_show_flag",
         description="is image show?",
         default_value="true",
     )
@@ -40,7 +40,7 @@ def generate_launch_description():
         description="ROS Topic Name of sensor_msgs/msg/Image message",
         # default_value="/camera/camera/color/image_raw",      ## realsense
         # default_value="/rgb/image_raw",                      ## azure_kinect
-        default_value="/camera/color/image_raw",             ## orbbec_series
+        default_value="/hsrb/head_rgbd_sensor/rgb/image_raw",             ## orbbec_series
     )
 
     point_cloud_topic_name = LaunchConfiguration("point_cloud_topic_name")
@@ -49,7 +49,7 @@ def generate_launch_description():
         description="ROS Topic Name of sensor_msgs/msg/PointCloud2 message",
         # default_value="/camera/camera/depth/color/points",   ## realsense
         # default_value="/points2",                            ## azure_kinect
-        default_value="/camera/depth_registered/points",     ## orbbec_series
+        default_value="/hsrb/head_rgbd_sensor/depth_registered/points",     ## orbbec_series
     )
 
     in_scale_factor = LaunchConfiguration("in_scale_factor")
@@ -116,7 +116,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                "img_show_flag": img_show_flag,
+                "image_show_flag": image_show_flag,
                 "execute_default": execute_default,
                 "image_topic_name": image_topic_name,
                 "in_scale_factor": in_scale_factor,
@@ -151,14 +151,14 @@ def generate_launch_description():
             "cloud_topic_name": point_cloud_topic_name,
             "img_topic_name": image_topic_name,
             "execute_default": execute_default,
-            "fast_shot": "true",
+            "fast_shot": "false",
         }.items(),
         condition=IfCondition(use_3d),  # use_3dがTrueのときのみ実行
     )
 
     return LaunchDescription(
         [
-            img_show_flag_cmd,
+            image_show_flag_cmd,
             execute_default_cmd,
             image_topic_name_cmd,
             point_cloud_topic_name_cmd,
