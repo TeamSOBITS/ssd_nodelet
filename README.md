@@ -11,6 +11,7 @@
 # SSD for ROS
 
 <!-- 目次 -->
+<!-- 目次 -->
 <details>
   <summary>目次</summary>
   <ol>
@@ -24,13 +25,8 @@
         <li><a href="#インストール方法">インストール方法</a></li>
       </ul>
     </li>
-    <li><a href="#実行・操作方法">実行・操作方法</a></li>
-      <!-- <ul>
-        <li><a href="#モデルのダウンロード">モデルのダウンロード</a></li>
-        <li><a href="#会話をする">会話をする</a></li>
-      </ul> -->
-    </li>
-    <li><a href="#パラメーター">パラメーター</a></li>
+    <li><a href="#実行操作方法">実行・操作方法</a></li>
+      <li><a href="#パラメーター">パラメーター</a></li>
     <li><a href="#マイルストーン">マイルストーン</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <!-- <li><a href="#license">License</a></li> -->
