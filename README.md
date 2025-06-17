@@ -39,7 +39,7 @@
 <!-- レポジトリの概要 -->
 ## 概要
 
-本レポジトリは、Single Shot MultiBox Detector(SSD)による物体検出をROS2環境で行うためのパッケージです。
+本レポジトリは，Single Shot MultiBox Detector(SSD)による物体検出をROS2環境で行うためのパッケージです．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -47,13 +47,13 @@
 <!-- 環境構築 -->
 ## 環境構築
 
-ここで，本レポジトリのセットアップ方法について説明します．
+本レポジトリのセットアップ方法について説明します．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### 環境条件
 
-まず，以下の環境を整えてから，次のインストール段階に進んでください．
+まず，以下の環境を整えてから，次のインストール方法に進んでください．
 
 | System | Version |
 | --- | --- |
@@ -65,19 +65,19 @@
 
 
 ### インストール方法
-1. ROS2の`src`フォルダに移動します。
+1. はじめにROS2の`src`フォルダに移動します．
     ```sh
     cd ~/colcon_ws/src
     ```
-2. レポジトリの中へ移動します。
+2. `src`フォルダ内にROSパッケージ`ssd_nodelet`をクローンします．
     ```sh
     git clone -b humble-devel https://github.com/TeamSOBITS/ssd_nodelet.git
     ```
-3. レポジトリの中へ移動します．
+3. クローンしたレポジトリフォルダの中へ移動します．
     ```sh
     cd ssd_nodelet
     ```
-4. 維新パッケージをインストールします．
+4. 依存パッケージをインストールします．
     ```sh
     bash install.sh
     ```
@@ -96,21 +96,25 @@
 
 <!-- 実行・操作方法 -->
 ## 実行・操作方法
-1. カメラを起動し、[ssd.launch.py](launch/ssd_ros.launch.py)の**image_topic_name**を使用するカメラのトピック名に書き換える。
+パッケージのビルドまで完了したら，以下の手順で動作確認を行うことができます．
+
+1. カメラを起動します．
+
+2. [ssd.launch.py](launch/ssd_ros.launch.py)の**image_topic_name**を使用するカメラのトピック名に書き換えます．
 
     例
     ```python
-    default_value="/camera/camera/color/image_raw",          ##   realsense
+    default_value="/camera/camera/color/image_raw",           ## realsense
     ```
 
-2. RGBDカメラを使用する場合は，[ssd.launch.py](launch/ssd_ros.launch.py)のpoint_cloud_topic_nameも使用するカメラの点群のトピック名に書き換える．
+3. RGBDカメラを使用する場合は，[ssd.launch.py](launch/ssd_ros.launch.py)の**point_cloud_topic_name**を使用するカメラの点群トピック名に書き換えます．
 
     例
     ```python
-    default_value="/camera/camera/depth/color/points",      ## realsense
+    default_value="/camera/camera/depth/color/points",      　## realsense
     ```
 
-3. 検出したい対象に応じて[ssd.launch.py](launch/ssd_ros.launch.py)の使用するモデルの以下のパスを書き換える。
+4. 物体検出（人を含む）するか，顔検出をするかに応じて使用するモデルを変更するため，[ssd.launch.py](launch/ssd_ros.launch.py)内の以下のパスを書き換えます．
     - voc_object_prototxt_path
     - voc_object_caffemodel_path
     - voc_object_names_path
@@ -122,14 +126,14 @@
     voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
     ```
 
-4. 顔の検出をする場合は[ssd.launch.py](launch/ssd_ros.launch.py)の**in_scale_factor**を書き換える。
+6. 顔の検出をする場合は，パスの変更に加えて[ssd.launch.py](launch/ssd_ros.launch.py)の**in_scale_factor**を書き換えます．
     ```python
     # default_value="0.007843",     # 物体検出時
     default_value="1.00",           # 顔検出時
     ```
 
 
-5. [ssd.launch.py](launch/ssd_ros.launch.py)を起動する
+7. 必要な変更が完了したら,[ssd.launch.py](launch/ssd_ros.launch.py)を起動して動作確認することが可能です．
     ```sh
     ros2 launch ssd_ros ssd_ros.launch.py
     ```
@@ -137,7 +141,7 @@
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## パラメーター
-[ssd.launch.py](launch/ssd_ros.launch.py)内で設定可能なパラメータは以下のとおりである。
+[ssd.launch.py](launch/ssd_ros.launch.py)内で設定可能なパラメータは以下のとおりです．
 | パラメーター名  | 説明 | デフォルト値 |
 | ------------- | ------------- | ------------- |
 |image\_show\_flag|画像を表示するかどうかの制御|`true`|
