@@ -66,15 +66,15 @@
 
 ### インストール方法
 1. ROS2の`src`フォルダに移動します。
-    ```console
+    ```sh
     cd ~/colcon_ws/src
     ```
 2. レポジトリの中へ移動します。
-    ```console
+    ```sh
     git clone -b humble-devel https://github.com/TeamSOBITS/ssd_nodelet.git
     ```
 3. レポジトリの中へ移動します．
-    ```console
+    ```sh
     cd ssd_nodelet
     ```
 4. 維新パッケージをインストールします．
@@ -82,13 +82,13 @@
     bash install.sh
     ```
 5. パッケージをビルドします
-    ```console
+    ```sh
     cd ~/colcon_ws/
     ```
-    ```console
+    ```sh
     colcon build --symlink-install
     ```    
-    ```console
+    ```sh
     source ~/colcon_ws/install/setup.sh
     ```
 
@@ -130,7 +130,7 @@
 
 
 5. [ssd.launch.py](launch/ssd_ros.launch.py)を起動する
-    ```console
+    ```sh
     ros2 launch ssd_ros ssd_ros.launch.py
     ```
 
