@@ -78,7 +78,7 @@
     cd ssd_nodelet
     ```
 4. 維新パッケージをインストールします．
-    ```console
+    ```sh
     bash install.sh
     ```
 5. パッケージをビルドします
@@ -99,14 +99,14 @@
 1. カメラを起動し、[ssd.launch.py](launch/ssd_ros.launch.py)の**image_topic_name**を使用するカメラのトピック名に書き換える。
 
     例
-    ```sh
+    ```python
     default_value="/camera/camera/color/image_raw",          ##   realsense
     ```
 
 2. RGBDカメラを使用する場合は，[ssd.launch.py](launch/ssd_ros.launch.py)のpoint_cloud_topic_nameも使用するカメラの点群のトピック名に書き換える．
 
     例
-    ```sh
+    ```python
     default_value="/camera/camera/depth/color/points",      ## realsense
     ```
 
@@ -116,14 +116,14 @@
     - voc_object_names_path
 
     例：物体検出時
-    ```sh
+    ```python
     voc_object_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.prototxt')
     voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.caffemodel')
     voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
     ```
 
 4. 顔の検出をする場合は[ssd.launch.py](launch/ssd_ros.launch.py)の**in_scale_factor**を書き換える。
-    ```sh
+    ```python
     # default_value="0.007843",     # 物体検出時
     default_value="1.00",           # 顔検出時
     ```
@@ -137,21 +137,21 @@
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## パラメーター
-### 鋭意作成中
-
-* **image\_show\_flag**: この真偽値パラメータは、画像を表示するかどうかを制御します。デフォルトは`true`です。
-* **execute\_default**: この真偽値パラメータは、SSD (Single Shot MultiBox Detector) がデフォルトで起動するかどうかを決定します。デフォルトは`true`です。
-* **image\_topic\_name**: この文字列パラメータは、`sensor_msgs/msg/Image`メッセージのROSトピック名を指定します。デフォルトは`/image_raw`（Webカメラ用）です。
-* **point\_cloud\_topic\_name**: この文字列パラメータは、`sensor_msgs/msg/PointCloud2`メッセージのROSトピック名を指定します。デフォルトは`/hsrb/head_rgbd_sensor/depth_registered/points`（Orbbecシリーズカメラ用）です。
-* **in\_scale\_factor**: この浮動小数点パラメータは、Caffemodelでデータを処理する際の変換時に使用されるスケールパラメータを表します。デフォルトは`1.00`です。
-* **confidence\_threshold**: この浮動小数点パラメータは、検出結果が公開されるために必要な最小の確率を設定します。デフォルトは`0.5`です。
-* **ssd\_prototxt\_name**: この文字列パラメータは、ニューラルネットワークの構造を記述した`.prototxt`ファイルへのパスを指定します。デフォルトは`ssd_ros`パッケージの`models`ディレクトリにある`voc_object.prototxt`です。
-* **ssd\_caffemodel\_name**: この文字列パラメータは、学習済みCaffemodelへのパスを指定します。デフォルトは`ssd_ros`パッケージの`models`ディレクトリにある`voc_object.caffemodel`です。
-* **ssd\_class\_names\_file**: この文字列パラメータは、物体名のリストを含むファイルへのパスを指定します。デフォルトは`ssd_ros`パッケージの`models`ディレクトリにある`voc_object_names.txt`です。
-* **object\_specified\_enabled**: この真偽値パラメータは、特定の物体の検出を有効または無効にします。デフォルトは`false`です。
-* **specified\_object\_name**: この文字列パラメータは、`object_specified_enabled`が`true`に設定されている場合に検出する物体の名前を指定します。デフォルトは空の文字列です。
-* **namespace**: この文字列パラメータは、このファイルによって起動されるノードの名前空間を定義します。デフォルトは`ssd_ros`です。
-* **use\_3d**: この真偽値パラメータは、3D検出を有効にするかどうかを制御します。デフォルトは`true`です。
+[ssd.launch.py](launch/ssd_ros.launch.py)内で設定可能なパラメータは以下のとおりである。
+| パラメーター名  | 説明 | デフォルト値 |
+| ------------- | ------------- | ------------- |
+|image\_show\_flag|画像を表示するかどうかの制御|`true`|
+|execute\_default|SSD (Single Shot MultiBox Detector) がデフォルトで起動するかどうかを決定|`true`|
+|image\_topic\_name|`sensor_msgs/msg/Image`型メッセージのROSトピック名を指定|`/camera/camera/color/image_raw`（realsense用）|
+|point\_cloud\_topic\_name|`sensor_msgs/msg/PointCloud2`型メッセージのROSトピック名を指定|`/camera/camera/depth/color/points`（realsense用）|
+|in\_scale\_factor|Caffemodelでデータを処理する際の変換時に使用されるスケールパラメータ|`0.007843`（物体検出用）|
+|confidence\_threshold|検出結果の信頼度に対するしきい値|`0.5`|
+|ssd_prototxt_name|Caffemodelの構造を記述したファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
+|ssd_caffemodel_name|学習済みモデルのファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
+|ssd_class_names_file|学習済み物体名リストのファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
+|object\_specified\_enabled|特定の物体検出の有効化フラグ|`true`|
+|specified\_object\_name|`object_specified_enabled`が`true`に設定されている場合に検出する物体の名前を指定|`person`|
+|use\_3d|3D検出の有効化フラグ|`true`|
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
