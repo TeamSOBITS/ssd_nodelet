@@ -160,7 +160,14 @@
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## マイルストーン
+* image_to_positionの更新に伴うlaunchパラメータの更新が不完全なため，今後更新予定.
+  - "cluster_tolerance": "0.01",
+  - "min_clusterSize": "100",
+  -  "max_clusterSize": "20000",
+  -  " noise_point_cloud_range": "0.01",
+  -   "enable_id": "false",
 現時点のbugや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
+
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
