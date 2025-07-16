@@ -147,18 +147,18 @@ The parameters that can be set in [ssd.launch.py](launch/ssd_ros.launch.py) are 
 
 | Parameter Name  | Description | Default Value |
 | ------------- | ------------- | ------------- |
-|image\_show\_flag|Control whether to display images|`true`|
-|execute\_default|Determines whether SSD (Single Shot MultiBox Detector) starts by default|`true`|
-|image\_topic\_name|Specify the ROS topic name of the `sensor_msgs/msg/Image` message type|`/camera/camera/color/image_raw`（realsense用）|
-|point\_cloud\_topic\_name|Specify the ROS topic name of the `sensor_msgs/msg/PointCloud2` message type|`/camera/camera/depth/color/points`（realsense用）|
-|in\_scale\_factor|Scale parameter used for data preprocessing in the Caffemodel|`0.007843`（For object detection）|
-|confidence\_threshold|Confidence threshold for detection results|`0.5`|
-|ssd_prototxt_name|File path describing the structure of the Caffemodel|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
-|ssd_caffemodel_name|File path of the trained model|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
-|ssd_class_names_file|File path of the trained object names list|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
-|object\_specified\_enabled|Flag to enable detection of specific objects|`true`|
-|specified\_object\_name|Specify the name of the object to detect when `object_specified_enabled` is set to `true`|`person`|
-|use\_3d|Flag to enable 3D detection|`true`|
+|image_show_flag|Control whether to display images|`true`|
+|execute_default|Determines whether SSD (Single Shot MultiBox Detector) starts by default|`true`|
+|image_topic_name|Specify the ROS topic name of the `sensor_msgs/msg/Image` message type|`/camera/camera/color/image_raw`（realsense用）|
+|point_cloud_topic_name|Specify the ROS topic name of the `sensor_msgs/msg/PointCloud2` message type|`/camera/camera/depth/color/points`（realsense用）|
+|in_scale_factor|Scale parameter used for data preprocessing in the Caffemodel|`0.007843`（For object detection）|
+|confidence_threshold|Confidence threshold for detection results|`0.5`|
+|ssd_prototxt_name|File path describing the structure of the Caffemodel|/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
+|ssd_caffemodel_name|File path of the trained model|/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
+|ssd_class_names_file|File path of the trained object names list|/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
+|object_specified_enabled|Flag to enable detection of specific objects|`true`|
+|specified_object_name|Specify the name of the object to detect when `object_specified_enabled` is set to `true`|`person`|
+|use_3d|Flag to enable 3D detection|`true`|
 |cluster_tolerance|Threshold for considering how far apart point clusters can be regarded as the same object|`0.01`|
 |min_clusterSize|Threshold to reject point clusters below a certain size|`100`|
 |max_clusterSize|Threshold to reject point clusters above a certain size|`20000`|
