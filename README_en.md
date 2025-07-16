@@ -15,21 +15,21 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#Introduction">introduction</a>
+      <a href="#introduction">introduction</a>
     </li>
     <li>
-      <a href="#Getting Started">Getting Started</a>
+      <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#Prerequisites">Prerequisites</a></li>
-        <li><a href="#Installation">Installation</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#Launch and Usage">Launch and Usage</a></li>
-      <li><a href="#Parameters">Parameters</a></li>
-    <li><a href="#Milestone">Milestone</a></li>
+    <li><a href="#launch-and-usage">Launch and Usage</a></li>
+      <li><a href="#parameters">Parameters</a></li>
+    <li><a href="#milestone">Milestone</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#Acknowledgments">Acknowledgments</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
