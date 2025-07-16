@@ -150,9 +150,9 @@
 |point\_cloud\_topic\_name|`sensor_msgs/msg/PointCloud2`型メッセージのROSトピック名を指定|`/camera/camera/depth/color/points`（realsense用）|
 |in\_scale\_factor|Caffemodelでデータを処理する際の変換時に使用されるスケールパラメータ|`0.007843`（物体検出用）|
 |confidence\_threshold|検出結果の信頼度に対するしきい値|`0.5`|
-|ssd_prototxt_name|Caffemodelの構造を記述したファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
-|ssd_caffemodel_name|学習済みモデルのファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
-|ssd_class_names_file|学習済み物体名リストのファイルパス|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
+|ssd_prototxt_name|Caffemodelの構造を記述したファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
+|ssd_caffemodel_name|学習済みモデルのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
+|ssd_class_names_file|学習済み物体名リストのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
 |object\_specified\_enabled|特定の物体検出の有効化フラグ|`true`|
 |specified\_object\_name|`object_specified_enabled`が`true`に設定されている場合に検出する物体の名前を指定|`person`|
 |use\_3d|3D検出の有効化フラグ|`true`|
