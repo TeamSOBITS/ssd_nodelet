@@ -1,256 +1,186 @@
 <a name="readme-top"></a>
 
-[JP](README.md) | [EN](README_en.md)
+[JA](README.md) | [EN](README_en.md)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-<!-- [![MIT License][license-shield]][license-url] -->
+[![License][license-shield]][license-url]
 
-# SSD Nodelet
+# SSD for ROS
 
-<!-- TABLE OF CONTENTS -->
+<!-- Table of Contents -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#introduction">Introduction</a>
+      <a href="#Introduction">Introduction</a>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#Getting Started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#launch-and-usage">Launch and Usage</a></li>
-    <li><a href="#milestone">Milestone</a></li>
-    <li><a href="#change-log">Change-Log</a></li>
+    <li><a href="#Launch and Usage">Launch and Usage</a></li>
+    <li><a href="#parameters">Parameters</a></li>
+    <li><a href="#milestones">Milestones</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#Acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
 
 
-<!-- INTRODUCTION -->
-## Introduction
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
+<!-- Repository overview -->
+## Overview
 
-* Object detection by SSD (Single Shot MultiBox Detector)
-* High speed by Nodelet implementation
-* When camera image is input at 50Hz
-  
-    SSD Node
-    ```
-    average rate: 12.962
-        min: 0.050s max: 0.088s std dev: 0.00711s window: 77
-    ```
-    SSD Nodelet
-    ```
-    average rate: 49.889
-        min: 0.015s max: 0.027s std dev: 0.00243s window: 49
-    ```
-
-<!-- <div align="center">
-    <img src="doc/ssd_nodelet.png" width="1080">
-</div> 
-<div align="center">
-    <img src="doc/ssd_nodelet_pose.png" width="1080"> 
-</div>  -->
-
+This repository provides a package for performing object detection using the Single Shot MultiBox Detector (SSD) in a ROS 2 environment.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- GETTING STARTED -->
+<!-- Getting Started -->
 ## Getting Started
 
 This section describes how to set up this repository.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Prerequisites
 
-The following environment must be in place for normal operation.
+First, prepare the following environment before proceeding to the installation steps.
 
-| System  | Version |
-| ------------- | ------------- |
-| Ubuntu | 20.04 (Focal Fossa) |
-| ROS | Noetic Ninjemys |
-| Python | 3.0~ |
-
-> [!NOTE]
-> If you need to install `Ubuntu` or `ROS`, please check our [SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6).
+| System | Version |
+| --- | --- |
+| Ubuntu | 22.04 (Jammy Jellyfish) |
+| ROS    | Humble Hawksbill    |
+| Python | >=3.10              |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Installation
-
-
-1. Go to the `src` folder of ROS.
-   ```sh
-   $ roscd
-   # Or just use "cd ~/catkin_ws/" and change directory.
-   $ cd src/
-   ```
-2. Clone this repository.
-   ```sh
-   $ git clone https://github.com/TeamSOBITS/ssd_nodelet
-   ```
-3. Navigate into the repository.
-   ```sh
-   $ cd ssd_nodelet/
-   ```
-4. Install the dependent packages.
-   ```sh
-   $ bash install.sh
-   ```
-5. Compile the package.
-   ```sh
-   $ roscd
-   # Or just use "cd ~/catkin_ws/" and change directory.
-   $ catkin_make
-   ```
+1. First, navigate to the `src` folder of your ROS 2 workspace.
+    ```sh
+    cd ~/colcon_ws/src
+    ```
+2. Clone the ROS package `ssd_nodelet` into the `src` folder.
+    ```sh
+    git clone -b humble-devel https://github.com/TeamSOBITS/ssd_nodelet.git
+    ```
+3. Navigate into the cloned repository folder.
+    ```sh
+    cd ssd_nodelet
+    ```
+4. Install the required dependencies.
+    ```sh
+    bash install.sh
+    ```
+5. Build the package.
+    ```sh
+    cd ~/colcon_ws/
+    ```
+    ```sh
+    colcon build --symlink-install
+    ```    
+    ```sh
+    source ~/colcon_ws/install/setup.sh
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- LAUNCH AND USAGE EXAMPLES -->
+<!-- Launch and Usage -->
 ## Launch and Usage
+Once the package has been successfully built, you can verify its operation using the following steps:
 
-### Camera
-```bash
-$ roslaunch ssd_nodelet camera_720p_16_9.launch
-# In addition
-# camera_1080p_16_9.launch  camera_480p_16_9.launch   camera_720p_16_9.launch
-# camera_1080p_3_2.launch   camera_480p_3_2.launch    camera_720p_3_2.launch
-```
-※If the following error occurs
-```python
-[ERROR] [1663911409.917317256]: Permission denied opening /dev/bus/usb/001/002
-```
-Execute the following code
-```python
-sudo chmod o+w /dev/bus/usb/001/002
-```
+1. Start the camera.
 
-### Object Detect
-```bash
-$ roslaunch ssd_nodelet face_detect.launch  <- face detect mode
-$ roslaunch ssd_nodelet object_detect.launch  <- object detect mode
-```
-### Object Pose Detect
-```bash
-$ roslaunch ssd_nodelet face_detect_pose.launch  <- face detect mode
-$ roslaunch ssd_nodelet object_detect_pose.launch  <- object detect mode
-```
+2. In [ssd.launch.py](launch/ssd_ros.launch.py), update **image_topic_name** to match the topic name used by your camera.
 
-### Publications:
-|Topic Name|Type|Meaning|
-|---|---|---|
-|/ssd_object_detect/detect_result|sensor_msgs/Image|Output image (detection result)|
-|/ssd_object_detect/object_name|sobits_interfaces/StringArray|List of detected object names|
-|/ssd_object_detect/object_rect|sobits_interfaces/BoundingBoxes|Bounding box information of detected object|
+    Ex.
+    ```python
+    default_value="/camera/camera/color/image_raw",           ## realsense
+    ```
 
-#### Only Object Pose
-|Topic Name|Type|Meaning|
-|---|---|---|
-|/ssd_object_detect/object_pose|sobits_interfaces/ObjectPoseArray|Position of detected object|
+3. If you are using an RGBD camera, update **point_cloud_topic_name** in [ssd.launch.py](launch/ssd_ros.launch.py) to match the point cloud topic of your camera.
 
-### Subscriptions:
-|Topic Name|Type|Meaning|
-|---|---|---|
-|/camera/rgb/image_raw|sensor_msgs/Image|Input image|
-|/ssd_object_detect/detect_ctrl|std_msgs/Bool|Detection on/off|
+    Ex.
+    ```python
+    default_value="/camera/camera/depth/color/points",      　## realsense
+    ```
 
-#### Only Object Pose
-|Topic Name|Type|Meaning|
-|---|---|---|
-|/camera/depth/points|sensor_msgs/PointCloud2|Input point cloud|
+4. Depending on whether you want to perform object detection (including people) or face detection, update the following model paths in [ssd.launch.py](launch/ssd_ros.launch.py):
+    - voc_object_prototxt_path
+    - voc_object_caffemodel_path
+    - voc_object_names_path
 
-### Parameters:
-|Parameter Name|Type|Meaning|
-|---|---|---|
-|/ssd_object_detect/ssd_nodelet/ssd_img_show_flag|bool|Whether to draw the detection image or not|
-|/ssd_object_detect/ssd_nodelet/ssd_execute_default|bool|Whether to initiate detection at startup|
-|/ssd_object_detect/ssd_nodelet/ssd_pub_result_image|bool|Whether to publish /detect_result|
-|/ssd_object_detect/ssd_nodelet/ssd_image_topic_name|string|Topic name of input image|
-|/ssd_object_detect/ssd_nodelet/ssd_in_scale_factor|double|Scale parameter when converting Blob format handled by Caffe|
-|/ssd_object_detect/ssd_nodelet/ssd_confidence_threshold|double|Confidence threshold for results to be added to the detection results list|
-|/ssd_object_detect/ssd_nodelet/ssd_prototxt_name|double|string|prototxt file path|
-|/ssd_object_detect/ssd_nodelet/ssd_caffemodel_name|string|caffe model file path|
-|/ssd_object_detect/ssd_nodelet/ssd_class_names_file|string|Object name list file path to detect|
-|/ssd_object_detect/ssd_nodelet/object_specified_enabled|bool|Whether to perform detection only on specific objects|
-|/ssd_object_detect/ssd_nodelet/specified_object_name|string|Specific object name to be detected (names not in the object label will be rejected)|
+    Ex. Object Detection:
+    ```python
+    voc_object_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.prototxt')
+    voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.caffemodel')
+    voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
+    ```
 
-#### Only Object Pose
-|Parameter Name|Type|Meaning|
-|---|---|---|
-|/ssd_object_detect/ssd_nodelet/use_tf|bool|Whether to register coordinates by tf or not|
-|/ssd_object_detect/ssd_nodelet/target_frame|string|Reference Coordinate Frame Name|
-|/ssd_object_detect/ssd_nodelet/ssd_cloud_topic_name|string|Topic name of input point cloud|
+6. For face detection, in addition to updating the paths, modify **in_scale_factor** in [ssd.launch.py](launch/ssd_ros.launch.py):
+    ```python
+    # default_value="0.007843",     # For object detection
+    default_value="1.00",           # For face detection
+    ```
+
+
+7. Once all the necessary changes are complete, you can launch [ssd.launch.py](launch/ssd_ros.launch.py) to verify that it is working:
+    ```sh
+    ros2 launch ssd_ros ssd_ros.launch.py
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Parameters
+The parameters that can be set in [ssd.launch.py](launch/ssd_ros.launch.py) are as follows:
 
-
-<!-- MILESTONE -->
-## Milestone
-
-- [ ] Enhanced documentation 
-
-See the [open issues](https://github.com/TeamSOBITS/ssd_nodelet/issues) for a full list of proposed features (and known issues).
+| Parameter Name  | Description | Default Value |
+| ------------- | ------------- | ------------- |
+|image\_show\_flag|Control whether to display images|`true`|
+|execute\_default|Determines whether SSD (Single Shot MultiBox Detector) starts by default|`true`|
+|image\_topic\_name|Specify the ROS topic name of the `sensor_msgs/msg/Image` message type|`/camera/camera/color/image_raw`（realsense用）|
+|point\_cloud\_topic\_name|Specify the ROS topic name of the `sensor_msgs/msg/PointCloud2` message type|`/camera/camera/depth/color/points`（realsense用）|
+|in\_scale\_factor|Scale parameter used for data preprocessing in the Caffemodel|`0.007843`（For object detection）|
+|confidence\_threshold|Confidence threshold for detection results|`0.5`|
+|ssd_prototxt_name|File path describing the structure of the Caffemodel|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
+|ssd_caffemodel_name|File path of the trained model|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
+|ssd_class_names_file|File path of the trained object names list|/home/user_name/colcon_ws/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
+|object\_specified\_enabled|Flag to enable detection of specific objects|`true`|
+|specified\_object\_name|Specify the name of the object to detect when `object_specified_enabled` is set to `true`|`person`|
+|use\_3d|Flag to enable 3D detection|`true`|
+|cluster_tolerance|Threshold for considering how far apart point clusters can be regarded as the same object|`0.01`|
+|min_clusterSize|Threshold to reject point clusters below a certain size|`100`|
+|max_clusterSize|Threshold to reject point clusters above a certain size|`20000`|
+|noise_point_cloud_range|Amount of noise removal from the point cloud of the target object|`0.01`|
+|fast_shot|Flag to enable fast_shot|`true`|
+|enable_id|Flag to assign IDs to detected object labels|`false`|
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Milestones
+* There may be updates to the launch parameters due to changes in `image_to_position`.
 
-
-<!-- CHANGE-LOG -->
-## Change-Log
-
-- 1.0: OSS (2023-11-14)
-  - Enhanced README
-
-
-<!-- CONTRIBUTING -->
-<!-- ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
+Please check the [Issue page][issues-url] for current bugs and feature requests.
 
 
 
-<!-- LICENSE -->
-<!-- ## License
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
-
-
-<!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
-
 * [SSD: Single Shot MultiBox Detector](https://www.cs.unc.edu/~wliu/papers/ssd.pdf)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -262,5 +192,5 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [stars-url]: https://github.com/TeamSOBITS/ssd_nodelet/stargazers
 [issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
 [issues-url]: https://github.com/TeamSOBITS/ssd_nodelet/issues
-<!-- [license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[license-url]: https://github.com/TeamSOBITS/ssd_nodelet/blob/master/LICENSE.txt -->
+[license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
+[license-url]: LICENSE
