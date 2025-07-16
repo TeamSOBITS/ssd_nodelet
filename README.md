@@ -156,17 +156,23 @@
 |object\_specified\_enabled|特定の物体検出の有効化フラグ|`true`|
 |specified\_object\_name|`object_specified_enabled`が`true`に設定されている場合に検出する物体の名前を指定|`person`|
 |use\_3d|3D検出の有効化フラグ|`true`|
+|cluster_tolerance|どの程度離れた点群までは同一の物体とみなすかのしきい値|`0.01`|
+|min_clusterSize|一定数以下の点群クラスタを対象から棄却するかのしきい値|`100`|
+|max_clusterSize|一定数以上の点群クラスタを対象から棄却するかのしきい値|`20000`|
+|noise_point_cloud_range|対象の物体の点群からノイズ面を除去する量|`0.01`|
+|fast_shot|fast_shotの有効化フラグ|`true`|
+|enable_id|検出した物体のラベルにIDを付与するかのフラグ|`false`|
+
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## マイルストーン
-* image_to_positionの更新に伴うlaunchパラメータの更新が不完全なため，今後更新予定.
-  - "cluster_tolerance": "0.01",
-  - "min_clusterSize": "100",
-  -  "max_clusterSize": "20000",
-  -  " noise_point_cloud_range": "0.01",
-  -   "enable_id": "false",
-現時点のbugや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
+* image_to_positionの更新に伴うlaunchパラメータに更新の可能性あり．
+
+  - "": "100",
+  -  "": "20000",
+  -  " ": "",
+  -   "enable_id": "false",現時点のbugや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
 
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
