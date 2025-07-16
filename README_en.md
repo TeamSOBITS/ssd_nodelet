@@ -37,7 +37,7 @@
 
 
 <!-- Repository overview -->
-## Overview
+## Introduction
 
 This repository provides a package for performing object detection using the Single Shot MultiBox Detector (SSD) in a ROS 2 environment.
 
