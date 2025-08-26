@@ -34,22 +34,51 @@ def generate_launch_description():
         default_value="true",
     )
 
+    base_frame_name = LaunchConfiguration("base_frame_name")
+    base_frame_name_cmd = DeclareLaunchArgument(
+        "base_frame_name",
+        description="Base frame name for TF and 3D detection",
+        default_value="base_footprint",
+    )
+
     image_topic_name = LaunchConfiguration("image_topic_name")
     image_topic_name_cmd = DeclareLaunchArgument(
         "image_topic_name",
         description="ROS Topic Name of sensor_msgs/msg/Image message",
-        # default_value="/camera/camera/color/image_raw",      ## realsense
+        # default_value="/camera/color/image_raw",      ## realsense
         # default_value="/rgb/image_raw",                      ## azure_kinect
-        default_value="/hsrb/head_rgbd_sensor/rgb/image_raw",             ## orbbec_series
+        # default_value="",             ## orbbec_series
+        default_value="/camera/rgb/image_raw",            ## xtion
     )
 
     point_cloud_topic_name = LaunchConfiguration("point_cloud_topic_name")
     point_cloud_topic_name_cmd = DeclareLaunchArgument(
         "point_cloud_topic_name",
         description="ROS Topic Name of sensor_msgs/msg/PointCloud2 message",
-        # default_value="/camera/camera/depth/color/points",   ## realsense
+        # default_value="/camera/depth/color/points",   ## realsense
         # default_value="/points2",                            ## azure_kinect
-        default_value="/hsrb/head_rgbd_sensor/depth_registered/points",     ## orbbec_series
+        # default_value="",     ## orbbec_series
+        default_value="/camera/depth_registered/points",     ## xtion
+    )
+
+    depth_image_topic_name = LaunchConfiguration("depth_image_topic_name")
+    depth_image_topic_name_cmd = DeclareLaunchArgument(
+        "depth_image_topic_name",
+        description="ROS Topic Name of sensor_msgs/msg/Image message",
+        # default_value="/camera/depth/image_raw",      ## realsense
+        # default_value="",                      ## azure_kinect
+        # default_value="",             ## orbbec_series
+        default_value="/camera/depth/image_raw",    ## xtion
+    )
+
+    info_topic_name = LaunchConfiguration("info_topic_name")
+    info_topic_name_cmd = DeclareLaunchArgument(
+        "info_topic_name",
+        description="ROS Topic Name of sensor_msgs/msg/Image message",
+        # default_value="/camera/depth/image_raw",      ## realsense
+        # default_value="",                      ## azure_kinect
+        # default_value="",             ## orbbec_series
+        default_value="/camera/rgb/camera_info", ## xtion
     )
 
     in_scale_factor = LaunchConfiguration("in_scale_factor")
@@ -146,12 +175,14 @@ def generate_launch_description():
         ),
         launch_arguments={
             "namespace": namespace,
-            "base_frame_name": "base_footprint",
+            "base_frame_name": base_frame_name,
             "bbox_topic_name": "/ssd_ros/objects_rect",
             "cloud_topic_name": point_cloud_topic_name,
-            "img_topic_name": image_topic_name,
+            "depth_image_topic_name": depth_image_topic_name,
+            "info_topic_name": info_topic_name,
             "execute_default": execute_default,
-            "fast_shot": "false",
+            "enable_id": "False",
+            "positioning_detection_mode": "depth_image", # depth_image
         }.items(),
         condition=IfCondition(use_3d),  # use_3dがTrueのときのみ実行
     )
@@ -162,6 +193,8 @@ def generate_launch_description():
             execute_default_cmd,
             image_topic_name_cmd,
             point_cloud_topic_name_cmd,
+            depth_image_topic_name_cmd,
+            info_topic_name_cmd,
             in_scale_factor_cmd,
             confidence_threshold_cmd,
             ssd_prototxt_name_cmd,
@@ -170,6 +203,7 @@ def generate_launch_description():
             object_specified_enabled_cmd,
             specified_object_name_cmd,
             namespace_cmd,
+            base_frame_name_cmd,
             ssd_ros_node_cmd,
             use_3d_cmd,
             bbox_to_3d_cmd,
