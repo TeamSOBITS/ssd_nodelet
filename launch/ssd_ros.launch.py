@@ -138,6 +138,15 @@ def generate_launch_description():
         default_value="ssd_ros",
     )
 
+    positioning_detection_mode = LaunchConfiguration("positioning_detection_mode")
+    positioning_detection_mode_cmd = DeclareLaunchArgument(
+        "positioning_detection_mode",
+        description="Detection mode for 3D positioning",
+        # default_value="point_cloud",
+        # default_value="depth_image",
+        default_value="fast_point",
+    )
+
     ssd_ros_node_cmd = Node(
         package="ssd_ros",
         executable="single_shot_multibox_detector",
@@ -182,7 +191,7 @@ def generate_launch_description():
             "info_topic_name": info_topic_name,
             "execute_default": execute_default,
             "enable_id": "False",
-            "positioning_detection_mode": "depth_image", # depth_image
+            "positioning_detection_mode": positioning_detection_mode,
         }.items(),
         condition=IfCondition(use_3d),  # use_3dがTrueのときのみ実行
     )
@@ -203,6 +212,7 @@ def generate_launch_description():
             object_specified_enabled_cmd,
             specified_object_name_cmd,
             namespace_cmd,
+            positioning_detection_mode_cmd,
             base_frame_name_cmd,
             ssd_ros_node_cmd,
             use_3d_cmd,
