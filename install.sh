@@ -8,8 +8,8 @@ DIR=$(pwd)
 
 # Clone required packages
 cd ..
-git clone -b ${ROS_DISTRO}-devel https://github.com/TeamSOBITS/bbox_to_tf.git
-cd bbox_to_tf/
+git clone -b ${ROS_DISTRO}-devel https://github.com/TeamSOBITS/image_to_position.git
+cd image_to_position/
 bash install.sh
 cd ..
 
