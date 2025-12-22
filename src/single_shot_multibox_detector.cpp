@@ -148,8 +148,14 @@ class SSDRos : public rclcpp::Node {
             pub_bbox_->publish(detection_array_msg);
         }
         void callback_RunCtr(const std::shared_ptr<std_srvs::srv::SetBool::Request> req, std::shared_ptr<std_srvs::srv::SetBool::Response> res) {
+            rclcpp::QoS qos_profile(5); // depth = 5
+            qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+            // qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE);
+            qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+            qos_profile.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+
             if (req->data) {
-                if (!sub_image_) sub_image_ = this->create_subscription<sensor_msgs::msg::Image>(topic_name, 5, std::bind(&SSDRos::callback_image, this, std::placeholders::_1));
+                if (!sub_image_) sub_image_ = this->create_subscription<sensor_msgs::msg::Image>(topic_name, qos_profile, std::bind(&SSDRos::callback_image, this, std::placeholders::_1));
             } else {
                 if (sub_image_)  sub_image_.reset();
             }
