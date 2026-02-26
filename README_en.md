@@ -73,7 +73,7 @@ First, prepare the following environment before proceeding to the installation s
     ```
 2. Clone the ROS package `ssd_nodelet` into the `src` folder.
     ```sh
-    git clone -b humble-devel https://github.com/TeamSOBITS/ssd_nodelet.git
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_nodelet.git
     ```
 3. Navigate into the cloned repository folder.
     ```sh

@@ -71,7 +71,7 @@
     ```
 2. `src`フォルダ内にROSパッケージ`ssd_nodelet`をクローンします．
     ```sh
-    git clone -b humble-devel https://github.com/TeamSOBITS/ssd_nodelet.git
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_nodelet.git
     ```
 3. クローンしたレポジトリフォルダの中へ移動します．
     ```sh
