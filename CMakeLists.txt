@@ -6,8 +6,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(OpenCV 4.5.4 REQUIRED PATHS "/opt/opencv/opencv_4.5.4/")
-# find_package(OpenCV 4 REQUIRED)
+# find_package(OpenCV 4.5.4 REQUIRED PATHS "/opt/opencv/opencv_4.5.4/")
+find_package(OpenCV 4 REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -32,7 +32,11 @@ find_package(vision_msgs REQUIRED)
 #                             src/nodelets/image_cloud_subscriber_nodelet.cpp
 #                             src/single_shot_multibox_detector.cpp)
 ############################################
-include_directories(include)
+include_directories(
+  include
+  ${OpenCV_INCLUDE_DIRS}
+  ${cv_bridge_INCLUDE_DIRS}
+)
 add_executable(single_shot_multibox_detector src/single_shot_multibox_detector.cpp)
 ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros std_srvs rosidl_default_runtime vision_msgs)
 # add_executable(bbox_to_tf_fast_shot src/bbox_to_tf_fast_shot.cpp)
