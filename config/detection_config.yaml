@@ -7,7 +7,7 @@
 
       # Input Image topic name
       # ["/camera/color/image_raw" (Realsense)] ["/rgb/image_raw" (azure_kinect)] ["/camera/rgb/image_raw" (Xtion)]
-      image_topic_name: "/image_raw"
+      image_topic_name: "/camera/color/image_raw"
 
       # SSD Detector Configuration
       confidence_threshold: 0.5
