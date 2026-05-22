@@ -22,13 +22,6 @@ def generate_launch_description():
 
 
 
-    image_show_flag = LaunchConfiguration("image_show_flag")
-    image_show_flag_cmd = DeclareLaunchArgument(
-        "image_show_flag",
-        description="is image show?",
-        default_value="true",
-    )
-
     execute_default = LaunchConfiguration("execute_default")
     execute_default_cmd = DeclareLaunchArgument(
         "execute_default",
@@ -60,7 +53,6 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                "image_show_flag": image_show_flag,
                 "execute_default": execute_default,
                 "model_directory": model_directory,
             },
@@ -92,7 +84,6 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            image_show_flag_cmd,
             execute_default_cmd,
             model_directory_cmd,
             namespace_cmd,
