@@ -13,24 +13,16 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(tf2_ros REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
-find_package(pcl_conversions REQUIRED)
-find_package(pcl_ros REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(yaml-cpp REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(vision_msgs REQUIRED)
 
 
 #--- for C++
-# add_library(${PROJECT_NAME} src/nodelets/image_subscriber_nodelet.cpp
-#                             src/nodelets/image_cloud_subscriber_nodelet.cpp
-#                             src/single_shot_multibox_detector.cpp)
 ############################################
 include_directories(
   include
@@ -38,9 +30,8 @@ include_directories(
   ${cv_bridge_INCLUDE_DIRS}
 )
 add_executable(single_shot_multibox_detector src/single_shot_multibox_detector.cpp)
-ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros std_srvs rosidl_default_runtime vision_msgs)
-# add_executable(bbox_to_tf_fast_shot src/bbox_to_tf_fast_shot.cpp)
-# ament_target_dependencies(bbox_to_tf_fast_shot rclcpp std_msgs geometry_msgs sensor_msgs pcl_conversions pcl_ros tf2_ros sobits_interfaces rosidl_default_runtime vision_msgs)
+ament_target_dependencies(single_shot_multibox_detector OpenCV cv_bridge rclcpp std_msgs std_srvs sensor_msgs std_srvs rosidl_default_runtime vision_msgs)
+target_link_libraries(single_shot_multibox_detector yaml-cpp)
 
 install(TARGETS
   single_shot_multibox_detector
@@ -54,9 +45,17 @@ install(DIRECTORY launch/
 #--- end Launch
 
 
+#-- for Config
+install(DIRECTORY config/
+DESTINATION share/${PROJECT_NAME}/config)
+#--- end Config
+
+
 #-- for Models
-install(DIRECTORY models/
-DESTINATION share/${PROJECT_NAME}/models)
+install(DIRECTORY models/face_model/
+DESTINATION share/${PROJECT_NAME}/models/face_model)
+install(DIRECTORY models/objects_model/
+DESTINATION share/${PROJECT_NAME}/models/objects_model)
 #--- end Models
 
 

@@ -1,0 +1,59 @@
+/**:
+  ssd_ros:
+    ros__parameters:
+
+      # Detection results visualization
+      image_show_flag: true
+
+      # Input Image topic name
+      # ["/camera/color/image_raw" (Realsense)] ["/rgb/image_raw" (azure_kinect)] ["/camera/rgb/image_raw" (Xtion)]
+      image_topic_name: "/camera/color/image_raw"
+
+      # SSD Detector Configuration
+      confidence_threshold: 0.5
+
+      # Object Specification (if not specified(=[]), it will detect all the classes that the model can detect)
+      # [None](=[]) or [dummy](=[]), ["face"], ["person", "chair"], etc...
+      specified_object_class: ["person"]
+      # specified_object_class: [None]
+
+      # QoS Settings
+      qos_reliability: "BEST_EFFORT" # Options: "BEST_EFFORT", "RELIABLE", "SYSTEM_DEFAULT"
+
+
+
+  bbox_to_3d:
+    ros__parameters:
+      base_frame_name: "base_footprint"
+      bbox_topic_name: "/ssd_ros/objects_rect"
+      
+      # Input PointCloud topic name
+      # ["/camera/depth/color/points" (Realsense)] ["/points2" (azure_kinect)] ["/camera/depth_registered/points" (Xtion)]
+      cloud_topic_name: "/camera/depth/color/points"
+
+      # Input Depth Image topic name
+      # ["/camera/depth/image_rect_raw" (Realsense)] ["/depth/image_raw" (azure_kinect)] ["/camera/depth_registered/image_raw" (Xtion)]
+      depth_image_topic_name: "/camera/depth/image_rect_raw"
+
+      # Input CameraInfo topic name
+      # ["/camera/color/camera_info" (Realsense)] ["/rgb/camera_info" (azure_kinect)] ["/camera/rgb/camera_info" (Xtion)]
+      info_topic_name: "/camera/color/camera_info"
+
+      # Options
+      positioning_detection_mode: "depth_image" # Options: "point_cloud", "fast_point", "depth_image"
+      enable_id: false
+
+      # Clipping box parameters (respect to camera frame)
+      x_min: -2.0
+      x_max: 2.0
+      y_min: -2.0
+      y_max: 2.0
+      z_min: 0.0
+      z_max: 3.0
+
+      # Point Cloud Processing
+      cluster_tolerance: 0.01
+      min_cluster_size: 50
+      max_cluster_size: 20000
+      noise_point_cloud_range: 0.01
+      voxel_leaf_size: 0.01
