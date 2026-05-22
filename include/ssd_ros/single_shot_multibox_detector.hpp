@@ -22,7 +22,6 @@
 #include <vision_msgs/msg/detection2_d.hpp>
 #include <vision_msgs/msg/bounding_box2_d.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
-#include <geometry_msgs/msg/pose_with_covariance.hpp>
 
 #include <std_srvs/srv/set_bool.hpp>
 
