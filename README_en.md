@@ -71,13 +71,13 @@ First, prepare the following environment before proceeding to the installation s
     ```sh
     cd ~/colcon_ws/src
     ```
-2. Clone the ROS package `ssd_nodelet` into the `src` folder.
+2. Clone the ROS package `ssd_ros` into the `src` folder.
     ```sh
-    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_nodelet.git
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_ros.git
     ```
 3. Navigate into the cloned repository folder.
     ```sh
-    cd ssd_nodelet
+    cd ssd_ros
     ```
 4. Install the required dependencies.
     ```sh
@@ -102,40 +102,14 @@ Once the package has been successfully built, you can verify its operation using
 
 1. Start the camera.
 
-2. In [ssd.launch.py](launch/ssd_ros.launch.py), update **image_topic_name** to match the topic name used by your camera.
+2. In [detection_config.yaml](config/detection_config.yaml), update **image_topic_name** to match the topic name used by your camera.
 
     Ex.
-    ```python
-    default_value="/camera/camera/color/image_raw",           ## realsense
+    ```sh
+    image_topic_name: "/camera/color/image_raw" # Default Realsense Topic Name
     ```
 
-3. If you are using an RGBD camera, update **point_cloud_topic_name** in [ssd.launch.py](launch/ssd_ros.launch.py) to match the point cloud topic of your camera.
-
-    Ex.
-    ```python
-    default_value="/camera/camera/depth/color/points",      　## realsense
-    ```
-
-4. Depending on whether you want to perform object detection (including people) or face detection, update the following model paths in [ssd.launch.py](launch/ssd_ros.launch.py):
-    - voc_object_prototxt_path
-    - voc_object_caffemodel_path
-    - voc_object_names_path
-
-    Ex. Object Detection:
-    ```python
-    voc_object_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.prototxt')
-    voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.caffemodel')
-    voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
-    ```
-
-6. For face detection, in addition to updating the paths, modify **in_scale_factor** in [ssd.launch.py](launch/ssd_ros.launch.py):
-    ```python
-    # default_value="0.007843",     # For object detection
-    default_value="1.00",           # For face detection
-    ```
-
-
-7. Once all the necessary changes are complete, you can launch [ssd.launch.py](launch/ssd_ros.launch.py) to verify that it is working:
+3. Once all the necessary changes are complete, you can launch [ssd.launch.py](launch/ssd_ros.launch.py) to verify that it is working:
     ```sh
     ros2 launch ssd_ros ssd_ros.launch.py
     ```
@@ -143,33 +117,35 @@ Once the package has been successfully built, you can verify its operation using
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Parameters
-The parameters that can be set in [ssd.launch.py](launch/ssd_ros.launch.py) are as follows:
+The parameters that can be set in [ssd.launch.py](launch/ssd_ros.launch.py) and [detection_config.yaml](config/detection_config.yaml) are as follows:
 
 | Parameter Name  | Description | Default Value |
 | ------------- | ------------- | ------------- |
 |image_show_flag|Control whether to display images|`true`|
 |execute_default|Determines whether SSD (Single Shot MultiBox Detector) starts by default|`true`|
 |image_topic_name|Specify the ROS topic name of the `sensor_msgs/msg/Image` message type|`/camera/camera/color/image_raw`（realsense用）|
-|point_cloud_topic_name|Specify the ROS topic name of the `sensor_msgs/msg/PointCloud2` message type|`/camera/camera/depth/color/points`（realsense用）|
-|in_scale_factor|Scale parameter used for data preprocessing in the Caffemodel|`0.007843`（For object detection）|
 |confidence_threshold|Confidence threshold for detection results|`0.5`|
-|ssd_prototxt_name|File path describing the structure of the Caffemodel|/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
-|ssd_caffemodel_name|File path of the trained model|/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
-|ssd_class_names_file|File path of the trained object names list|/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
-|object_specified_enabled|Flag to enable detection of specific objects|`true`|
-|specified_object_name|Specify the name of the object to detect when `object_specified_enabled` is set to `true`|`person`|
+|specified_object_class| A list of strings specifying the names of objects to detect. If not specified, use `[None]` or `[dummy]`. | [`person`] |
 |use_3d|Flag to enable 3D detection|`true`|
-|cluster_tolerance|Threshold for considering how far apart point clusters can be regarded as the same object|`0.01`|
-|min_clusterSize|Threshold to reject point clusters below a certain size|`100`|
-|max_clusterSize|Threshold to reject point clusters above a certain size|`20000`|
-|noise_point_cloud_range|Amount of noise removal from the point cloud of the target object|`0.01`|
-|fast_shot|Flag to enable fast_shot|`true`|
-|enable_id|Flag to assign IDs to detected object labels|`false`|
+|model_directory| The **directory path** containing files describing the Caffe model structure, pre-trained model files, and detailed configuration files for each model. | `../models/objects_model` |
+
+
+
+> [!NOTE]
+> The `model_directory` should contain the following three items:
+> 1. A YAML file containing a list (class) of detectable objects in the order they were trained, and the scale parameters (in_scale_factor) used during data transformation when processing data with Caffemodel
+> 2. The file path to the list of trained object names (with the `.caffemodel` extension)
+> 3. The file path to the file describing the CaffeModel structure (with the `prototxt` extension)
+> Please limit the contents to these three items only.
+
+> [!NOTE]
+> For other parameters (especially `bbox_to_3d`), please refer to [image_to_position](https://github.com/TeamSOBITS/image_to_position).
+> The focus is primarily on Realsense.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Milestones
-* There may be updates to the launch parameters due to changes in `image_to_position`.
+* There may be updates to the launch parameters due to changes in `image_to_position`. : Resolved
 
 Please check the [Issue page][issues-url] for current bugs and feature requests.
 
@@ -184,13 +160,13 @@ Please check the [Issue page][issues-url] for current bugs and feature requests.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[contributors-url]: https://github.com/TeamSOBITS/ssd_nodelet/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[forks-url]: https://github.com/TeamSOBITS/ssd_nodelet/network/members
-[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[stars-url]: https://github.com/TeamSOBITS/ssd_nodelet/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[issues-url]: https://github.com/TeamSOBITS/ssd_nodelet/issues
-[license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[contributors-url]: https://github.com/TeamSOBITS/ssd_ros/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[forks-url]: https://github.com/TeamSOBITS/ssd_ros/network/members
+[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[stars-url]: https://github.com/TeamSOBITS/ssd_ros/stargazers
+[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[issues-url]: https://github.com/TeamSOBITS/ssd_ros/issues
+[license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_ros.svg?style=for-the-badge
 [license-url]: LICENSE

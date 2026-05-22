@@ -69,13 +69,13 @@
     ```sh
     cd ~/colcon_ws/src
     ```
-2. `src`フォルダ内にROSパッケージ`ssd_nodelet`をクローンします．
+2. `src`フォルダ内にROSパッケージ`ssd_ros`をクローンします．
     ```sh
-    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_nodelet.git
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/ssd_ros.git
     ```
 3. クローンしたレポジトリフォルダの中へ移動します．
     ```sh
-    cd ssd_nodelet
+    cd ssd_ros
     ```
 4. 依存パッケージをインストールします．
     ```sh
@@ -98,42 +98,17 @@
 ## 実行・操作方法
 パッケージのビルドまで完了したら，以下の手順で動作確認を行うことができます．
 
-1. カメラを起動します．
+1. カメラを起動
 
-2. [ssd.launch.py](launch/ssd_ros.launch.py)の**image_topic_name**を使用するカメラのトピック名に書き換えます．
-
-    例
-    ```python
-    default_value="/camera/camera/color/image_raw",           ## realsense
-    ```
-
-3. RGBDカメラを使用する場合は，[ssd.launch.py](launch/ssd_ros.launch.py)の**point_cloud_topic_name**を使用するカメラの点群トピック名に書き換えます．
+2. [detection_config.yaml](config/detection_config.yaml)の**image_topic_name**を使用するカメラのトピック名に書き換え
 
     例
-    ```python
-    default_value="/camera/camera/depth/color/points",      　## realsense
-    ```
-
-4. 物体検出（人を含む）するか，顔検出をするかに応じて使用するモデルを変更するため，[ssd.launch.py](launch/ssd_ros.launch.py)内の以下のパスを書き換えます．
-    - voc_object_prototxt_path
-    - voc_object_caffemodel_path
-    - voc_object_names_path
-
-    例：物体検出時
-    ```python
-    voc_object_prototxt_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.prototxt')
-    voc_object_caffemodel_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object.caffemodel')
-    voc_object_names_path = os.path.join(get_package_share_directory('ssd_ros'), 'models', 'voc_object_names.txt')
-    ```
-
-6. 顔の検出をする場合は，パスの変更に加えて[ssd.launch.py](launch/ssd_ros.launch.py)の**in_scale_factor**を書き換えます．
-    ```python
-    # default_value="0.007843",     # 物体検出時
-    default_value="1.00",           # 顔検出時
+    ```sh
+    image_topic_name: "/camera/color/image_raw" # Default Realsense Topic Name
     ```
 
 
-7. 必要な変更が完了したら,[ssd.launch.py](launch/ssd_ros.launch.py)を起動して動作確認することが可能です．
+3. [ssd.launch.py](launch/ssd_ros.launch.py)を起動して動作可能
     ```sh
     ros2 launch ssd_ros ssd_ros.launch.py
     ```
@@ -141,33 +116,47 @@
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## パラメーター
-[ssd.launch.py](launch/ssd_ros.launch.py)内で設定可能なパラメータは以下のとおりです．
+[ssd.launch.py](launch/ssd_ros.launch.py)内および[detection_config.yaml](config/detection_config.yaml)で設定可能なパラメータは以下のとおりです．
 | パラメーター名  | 説明 | デフォルト値 |
 | ------------- | ------------- | ------------- |
 |image\_show\_flag|画像を表示するかどうかの制御|`true`|
 |execute\_default|SSD (Single Shot MultiBox Detector) がデフォルトで起動するかどうかを決定|`true`|
 |image\_topic\_name|`sensor_msgs/msg/Image`型メッセージのROSトピック名を指定|`/camera/camera/color/image_raw`（realsense用）|
-|point\_cloud\_topic\_name|`sensor_msgs/msg/PointCloud2`型メッセージのROSトピック名を指定|`/camera/camera/depth/color/points`（realsense用）|
-|in\_scale\_factor|Caffemodelでデータを処理する際の変換時に使用されるスケールパラメータ|`0.007843`（物体検出用）|
 |confidence\_threshold|検出結果の信頼度に対するしきい値|`0.5`|
-|ssd_prototxt_name|Caffemodelの構造を記述したファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt|
-|ssd_caffemodel_name|学習済みモデルのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel|
-|ssd_class_names_file|学習済み物体名リストのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt|
-|object\_specified\_enabled|特定の物体検出の有効化フラグ|`true`|
-|specified\_object\_name|`object_specified_enabled`が`true`に設定されている場合に検出する物体の名前を指定|`person`|
+|specified\_object\_class|検出する物体の名前を指定する文字列リスト。指定しない場合は`[None]`または`[dummy]`とする| [`person`] |
 |use\_3d|3D検出の有効化フラグ|`true`|
-|cluster_tolerance|どの程度離れた点群までは同一の物体とみなすかのしきい値|`0.01`|
-|min_clusterSize|一定数以下の点群クラスタを対象から棄却するかのしきい値|`100`|
-|max_clusterSize|一定数以上の点群クラスタを対象から棄却するかのしきい値|`20000`|
-|noise_point_cloud_range|対象の物体の点群からノイズ面を除去する量|`0.01`|
-|fast_shot|fast_shotの有効化フラグ|`true`|
-|enable_id|検出した物体のラベルにIDを付与するかのフラグ|`false`|
+|model\_directory|Caffemodelの構造を記述したファイルや学習済みモデルのファイル、モデルごとの詳細設定ファイルらがある**ディレクトリパス** | `../models/objects_model` |
+
+<!-- 以下モデルごとの設定ファイル(拡張子がyamlのもの)へ移動または廃止 -->
+<!-- |in\_scale\_factor|Caffemodelでデータを処理する際の変換時に使用されるスケールパラメータ|`0.007843`（物体検出用）| -->
+<!-- |ssd_prototxt_name|Caffemodelの構造を記述したファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.prototxt| -->
+<!-- |ssd_caffemodel_name|学習済みモデルのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object.caffemodel| -->
+<!-- |ssd_class_names_file|学習済み物体名リストのファイルパス|/install/ssd_ros/share/ssd_ros/models/voc_object_names.txt| -->
+<!-- |object\_specified\_enabled|特定の物体検出の有効化フラグ|`true`| -->
+<!-- 以下パラメータはここでは詳しく書かずにimage_to_positionを参照 -->
+<!-- |cluster_tolerance|どの程度離れた点群までは同一の物体とみなすかのしきい値|`0.01`| -->
+<!-- |min_clusterSize|一定数以下の点群クラスタを対象から棄却するかのしきい値|`100`| -->
+<!-- |max_clusterSize|一定数以上の点群クラスタを対象から棄却するかのしきい値|`20000`| -->
+<!-- |noise_point_cloud_range|対象の物体の点群からノイズ面を除去する量|`0.01`| -->
+<!-- |fast_shot|fast_shotの有効化フラグ|`true`| -->
+<!-- |enable_id|検出した物体のラベルにIDを付与するかのフラグ|`false`| -->
+
+> [!NOTE]
+> model\_directory内の構成は以下の3つとする。
+> 1. 検出できる物体を、学習された順番に羅列されたリスト(class)とCaffemodelでデータを処理する際の変換時に使用されるスケールパラメータ(in\_scale\_factor)を記述したYAMLファイル
+> 2. 学習済み物体名リストのファイルパス(拡張子が`.caffemodel`のもの)
+> 3. Caffemodelの構造を記述したファイルパス(拡張子が`prototxt`のもの)\
+> これら3つのみにしてください。
+
+> [!NOTE]
+> その他のパラメータ(特にbbox_to_3d)は[image_to_position](https://github.com/TeamSOBITS/image_to_position)を参照してください。
+> 基本的にはRealsenseに焦点が合わせられている。
 
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ## マイルストーン
-* image_to_positionの更新に伴うlaunchパラメータに更新の可能性あり．
+* image_to_positionの更新に伴うlaunchパラメータに更新の可能性あり．： 解決
 
 現時点のbugや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
 
@@ -181,13 +170,13 @@
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[contributors-url]: https://github.com/TeamSOBITS/ssd_nodelet/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[forks-url]: https://github.com/TeamSOBITS/ssd_nodelet/network/members
-[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[stars-url]: https://github.com/TeamSOBITS/ssd_nodelet/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
-[issues-url]: https://github.com/TeamSOBITS/ssd_nodelet/issues
-[license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_nodelet.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[contributors-url]: https://github.com/TeamSOBITS/ssd_ros/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[forks-url]: https://github.com/TeamSOBITS/ssd_ros/network/members
+[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[stars-url]: https://github.com/TeamSOBITS/ssd_ros/stargazers
+[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/ssd_ros.svg?style=for-the-badge
+[issues-url]: https://github.com/TeamSOBITS/ssd_ros/issues
+[license-shield]: https://img.shields.io/github/license/TeamSOBITS/ssd_ros.svg?style=for-the-badge
 [license-url]: LICENSE
