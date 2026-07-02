@@ -55,7 +55,7 @@ int SingleShotMultiboxDetector::conpute(    cv::Mat& input_img,
         obj_bbox.xmax = object_area.x + object_area.width;
         obj_bbox.ymax = object_area.y + object_area.height;
         obj_bbox.probability = confidence;
-        obj_bbox.Class = class_names_[object_class];
+        obj_bbox.class_name = class_names_[object_class];
         object_bbox_array->bounding_boxes.emplace_back(obj_bbox);
         detect_object_name->data.emplace_back(class_names_[object_class]);
 
@@ -128,7 +128,7 @@ int SingleShotMultiboxDetector::conpute(
         obj_bbox.xmax = object_area.x + object_area.width;
         obj_bbox.ymax = object_area.y + object_area.height;
         obj_bbox.probability = confidence;
-        obj_bbox.Class = class_names_[object_class];
+        obj_bbox.class_name = class_names_[object_class];
         result->object_bbox_array->bounding_boxes.emplace_back(obj_bbox);
         result->detect_object_name->data.emplace_back(class_names_[object_class]);
 
@@ -141,7 +141,7 @@ int SingleShotMultiboxDetector::conpute(
         cv::putText(input_img, label, cv::Point(object_area.x, object_area.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 
         sobits_msgs::ObjectPose obj_pose;
-        obj_pose.Class = obj_bbox.Class;
+        obj_pose.class_name = obj_bbox.class_name;
         int x_ctr = ( obj_bbox.xmin + obj_bbox.xmax ) / 2;
         int y_ctr = ( obj_bbox.ymin + obj_bbox.ymax ) / 2;
         int array_num = ( width * y_ctr ) + x_ctr;
@@ -196,7 +196,7 @@ int SingleShotMultiboxDetector::conpute(
         geometry_msgs::TransformStamped transformStamped;
         transformStamped.header.stamp = ros::Time::now();
         transformStamped.header.frame_id = target_frame;
-        transformStamped.child_frame_id = obj_pose.Class + "_" + std::to_string(object_num);
+        transformStamped.child_frame_id = obj_pose.class_name + "_" + std::to_string(object_num);
 
         // Set the translation
         transformStamped.transform.translation.x = obj_pose.pose.position.x;

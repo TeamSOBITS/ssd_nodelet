@@ -46,9 +46,9 @@ def generate_launch_description():
         "image_topic_name",
         description="ROS Topic Name of sensor_msgs/msg/Image message",
         # default_value="/camera/color/image_raw",      ## realsense
-        # default_value="/rgb/image_raw",                      ## azure_kinect
+        default_value="/image_raw",                      ## azure_kinect
         # default_value="",             ## orbbec_series
-        default_value="/camera/rgb/image_raw",            ## xtion
+        # default_value="/camera/rgb/image_raw",            ## xtion
     )
 
     point_cloud_topic_name = LaunchConfiguration("point_cloud_topic_name")
